@@ -742,3 +742,18 @@ body::before {
   cursor: pointer;
   font-size: inherit;
 }
+
+.profile-form select {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--paper-line);
+  background: var(--parchment);
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 0.93rem;
+  color: var(--ink);
+}
+
+.profile-form select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
