@@ -929,3 +929,61 @@ body::before {
   font-size: 0.8rem;
   color: var(--text-faint);
 }
+
+/* ===================== Logo Hub ===================== */
+
+.hub-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.hub-logo__text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.hub-logo__ring {
+  stroke: var(--accent);
+  fill: none;
+}
+
+.hub-logo__leaf {
+  fill: var(--accent);
+}
+
+.hub-logo__vein {
+  stroke: var(--bg);
+}
+
+.hub-logo__dot {
+  fill: var(--accent);
+}
+
+/* Sur le hero (photo sombre en fond), on inverse en blanc */
+.hub__hero-logo .hub-logo__ring,
+.hub__hero-logo .hub-logo__leaf,
+.hub__hero-logo .hub-logo__dot {
+  fill: white;
+  stroke: white;
+}
+
+.hub__hero-logo .hub-logo__ring {
+  fill: none;
+}
+
+.hub__hero-logo .hub-logo__vein {
+  stroke: var(--accent-bright);
+}
+
+.hub__hero-logo .hub-logo__text {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.hub__hero-logo {
+  margin-bottom: 1.5rem;
+}

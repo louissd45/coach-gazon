@@ -1,13 +1,18 @@
+import HubLogo from './HubLogo';
+
 export default function Hub({ onSelect, onSignOut }) {
   return (
     <div className="hub">
       <header className="hub__header">
-        <span className="hub__brand">Mon Coach Extérieur</span>
+        <HubLogo size={26} />
         <button onClick={onSignOut}>Déconnexion</button>
       </header>
 
       <section className="hub__hero">
         <div className="hub__hero-content">
+          <div className="hub__hero-logo">
+            <HubLogo size={48} />
+          </div>
           <span className="hub__hero-eyebrow">Mon Coach Extérieur</span>
           <h1 className="hub__title">L'expertise terrain,<br />dans votre poche.</h1>
           <p className="hub__hero-sub">
