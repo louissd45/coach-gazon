@@ -1,4 +1,4 @@
-export default function Logo({ size = 28 }) {
+export default function Logo({ size = 26 }) {
   return (
     <div className="logo">
       <svg
@@ -10,13 +10,20 @@ export default function Logo({ size = 28 }) {
         aria-hidden="true"
       >
         <path
-          d="M16 29C16 29 6 24 6 13C6 7 10 3 16 3C22 3 26 7 26 13C26 24 16 29 16 29Z"
-          fill="var(--lawn-fresh)"
+          d="M16 28C16 28 7 23 7 13.5C7 8 11 4 16 4C21 4 25 8 25 13.5C25 23 16 28 16 28Z"
+          stroke="var(--gold)"
+          strokeWidth="1.2"
         />
         <path
-          d="M16 29C16 29 16 18 16 13C16 9 13 5 9 4"
-          stroke="var(--lawn-deep)"
-          strokeWidth="1.4"
+          d="M16 28C16 22 16 16 16 13C16 9.5 13 6 9.5 5"
+          stroke="var(--forest)"
+          strokeWidth="1.1"
+          strokeLinecap="round"
+        />
+        <path
+          d="M16 19C16 19 19.5 17.5 20.5 14"
+          stroke="var(--forest)"
+          strokeWidth="1"
           strokeLinecap="round"
         />
       </svg>

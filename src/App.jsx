@@ -65,6 +65,7 @@ function Dashboard({ user, signOut }) {
           <Logo />
           <button onClick={signOut}>Déconnexion</button>
         </header>
+        <span className="eyebrow" style={{ textAlign: 'center', display: 'block', marginTop: '2rem' }}>Adhésion annuelle</span>
         <Paywall onSubscribe={startCheckout} loading={subLoading} />
       </main>
     );
@@ -85,7 +86,6 @@ function Dashboard({ user, signOut }) {
 
   return (
     <main className="app">
-      <div className="grass-edge" style={{ marginTop: '0' }} />
       <header className="app__header">
         <Logo />
         <div className="app__nav">
@@ -103,6 +103,7 @@ function Dashboard({ user, signOut }) {
 
       {!showProfile && !showHistory && (
         <>
+          <span className="eyebrow">Diagnostic intelligent</span>
           <p className="app__subtitle">
             Uploadez une photo de votre pelouse pour un diagnostic instantané
           </p>
@@ -132,7 +133,8 @@ function Dashboard({ user, signOut }) {
 
               {status === STATUS.SUCCESS && result && (
                 <section className="diagnostic-result">
-                  <h2>{result.diagnostic}</h2>
+                  <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.6rem', display: 'block' }}>Votre diagnostic</span>
+                  <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
                   <p className="diagnostic-result__source">
                     Fiche de référence : {result.ficheReference}
                   </p>
