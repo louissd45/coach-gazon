@@ -779,3 +779,132 @@ body::before {
   border-radius: 2px;
   flex-shrink: 0;
 }
+
+/* ===================== Hub multi-espaces ===================== */
+
+.hub {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.25rem 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hub__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.85rem;
+  margin-bottom: 1rem;
+}
+
+.hub__header button {
+  background: transparent;
+  border: 1px solid var(--paper-line);
+  color: var(--moss);
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-family: var(--font-body);
+}
+
+.hub__brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--forest);
+}
+
+.hub__title {
+  text-align: center;
+  font-size: 1.7rem;
+  margin: 0.2rem 0 2rem;
+}
+
+.hub__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hub__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  background: var(--parchment-deep);
+  border: 1px solid var(--paper-line);
+  border-top: 2px solid var(--gold);
+  border-radius: 2px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.hub__card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.hub__card--soon {
+  opacity: 0.85;
+}
+
+.hub__card-icon {
+  margin-bottom: 0.75rem;
+}
+
+.hub__card-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--forest);
+  margin-bottom: 0.3rem;
+}
+
+.hub__card-desc {
+  font-size: 0.88rem;
+  color: var(--moss);
+  margin-bottom: 0.85rem;
+  line-height: 1.5;
+}
+
+.hub__card-status {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--moss-soft);
+  border: 1px solid var(--paper-line);
+  border-radius: 3px;
+  padding: 0.25rem 0.6rem;
+}
+
+.hub__card-status--active {
+  color: var(--forest);
+  border-color: var(--gold);
+}
+
+/* ===================== Coming soon ===================== */
+
+.coming-soon {
+  background: var(--parchment-deep);
+  border: 1px solid var(--paper-line);
+  border-top: 2px solid var(--gold);
+  border-radius: 2px;
+  padding: 1.6rem;
+  margin-top: 1.85rem;
+}
+
+.coming-soon__text {
+  color: var(--moss);
+  line-height: 1.6;
+  font-size: 0.93rem;
+}
+
+.coming-soon__hint {
+  font-size: 0.78rem;
+  color: var(--moss-soft);
+  font-style: italic;
+}

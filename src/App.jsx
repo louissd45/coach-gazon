@@ -8,6 +8,8 @@ import Paywall from './components/billing/Paywall';
 import ProductSuggestion from './components/products/ProductSuggestion';
 import Logo from './components/common/Logo';
 import FicheLibrary from './components/library/FicheLibrary';
+import Hub from './components/hub/Hub';
+import ComingSoon from './components/hub/ComingSoon';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useProfile } from './hooks/useProfile';
@@ -18,6 +20,7 @@ import './App.css';
 
 export default function App() {
   const { user, loading, signOut } = useAuth();
+  const [space, setSpace] = useState(null); // null | 'gazon' | 'piscine'
 
   if (loading) return <p className="app__loading">Chargement...</p>;
   if (!user) {
@@ -29,10 +32,26 @@ export default function App() {
     );
   }
 
-  return <Dashboard user={user} signOut={signOut} />;
+  if (space === 'gazon') {
+    return <Dashboard user={user} signOut={signOut} onBackToHub={() => setSpace(null)} />;
+  }
+
+  if (space === 'piscine') {
+    return (
+      <main className="app">
+        <ComingSoon
+          title="Coach Piscine"
+          description="L'analyse de l'eau et les conseils d'entretien pour votre piscine arrivent bientôt sur Mon Coach Extérieur."
+          onBack={() => setSpace(null)}
+        />
+      </main>
+    );
+  }
+
+  return <Hub onSelect={setSpace} onSignOut={signOut} />;
 }
 
-function Dashboard({ user, signOut }) {
+function Dashboard({ user, signOut, onBackToHub }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -111,6 +130,7 @@ function Dashboard({ user, signOut }) {
       <header className="app__header">
         <Logo />
         <div className="app__nav">
+          <button onClick={onBackToHub}>← Mes espaces</button>
           <button onClick={() => { setShowLibrary((v) => !v); setLibraryInitialTitre(null); }}>Bibliothèque</button>
           <button onClick={() => setShowHistory((v) => !v)}>Historique</button>
           <button onClick={() => setShowProfile((v) => !v)}>Mon profil</button>
