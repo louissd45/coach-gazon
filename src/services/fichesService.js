@@ -6,7 +6,7 @@ import { supabase } from './supabaseClient';
 export async function fetchAllFiches() {
   const { data, error } = await supabase
     .from('fiches_connaissances')
-    .select('id, titre, categorie, contenu')
+    .select('id, titre, categorie, contenu, image_url')
     .order('categorie')
     .order('titre');
 

@@ -58,6 +58,13 @@ export default function FicheLibrary({ initialTitre, onClose }) {
         </button>
         <span className="eyebrow">{CATEGORY_LABELS[selectedFiche.categorie]}</span>
         <h2>{selectedFiche.titre}</h2>
+        {selectedFiche.image_url && (
+          <img
+            src={selectedFiche.image_url}
+            alt={`Illustration des symptômes : ${selectedFiche.titre}`}
+            className="fiche-library__image"
+          />
+        )}
         <div className="gold-divider">
           <span className="gold-divider__mark" />
         </div>
@@ -95,7 +102,16 @@ export default function FicheLibrary({ initialTitre, onClose }) {
               className="fiche-library__item"
               onClick={() => setSelectedFiche(fiche)}
             >
-              {fiche.titre}
+              <span className="fiche-library__item-row">
+                {fiche.image_url && (
+                  <img
+                    src={fiche.image_url}
+                    alt=""
+                    className="fiche-library__thumb"
+                  />
+                )}
+                {fiche.titre}
+              </span>
               <span className="fiche-library__arrow">→</span>
             </button>
           </li>
