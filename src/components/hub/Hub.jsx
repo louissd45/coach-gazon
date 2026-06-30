@@ -17,12 +17,12 @@ export default function Hub({ onSelect, onSignOut }) {
             <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
               <path
                 d="M16 28C16 28 7 23 7 13.5C7 8 11 4 16 4C21 4 25 8 25 13.5C25 23 16 28 16 28Z"
-                stroke="var(--gold)"
+                stroke="var(--accent)"
                 strokeWidth="1.2"
               />
               <path
                 d="M16 28C16 22 16 16 16 13C16 9.5 13 6 9.5 5"
-                stroke="var(--forest)"
+                stroke="var(--accent)"
                 strokeWidth="1.1"
                 strokeLinecap="round"
               />
@@ -43,13 +43,13 @@ export default function Hub({ onSelect, onSignOut }) {
             <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
               <path
                 d="M4 22c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2 2 2 4 2"
-                stroke="var(--gold)"
+                stroke="var(--accent)"
                 strokeWidth="1.3"
                 strokeLinecap="round"
               />
               <path
                 d="M4 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2 2 2 4 2"
-                stroke="var(--forest)"
+                stroke="var(--accent)"
                 strokeWidth="1.1"
                 strokeLinecap="round"
               />
