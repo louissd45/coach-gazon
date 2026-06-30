@@ -64,6 +64,7 @@ Deno.serve(async (req: Request) => {
       success_url: `${APP_URL}?checkout=success`,
       cancel_url: `${APP_URL}?checkout=cancelled`,
       client_reference_id: user.id,
+      allow_promotion_codes: true,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

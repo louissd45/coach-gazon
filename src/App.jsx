@@ -10,6 +10,7 @@ import Logo from './components/common/Logo';
 import FicheLibrary from './components/library/FicheLibrary';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
+import { useProfile } from './hooks/useProfile';
 import { useAuth } from './context/AuthContext';
 import { fetchProductsForCategories } from './services/productService';
 import { STATUS } from './lib/constants';
@@ -38,6 +39,8 @@ function Dashboard({ user, signOut }) {
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
+  const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } =
+    useProfile(user.id);
   const { status: subStatus, loading: subLoading, startCheckout, refresh } =
     useSubscription(user.id);
   const [products, setProducts] = useState({});
@@ -56,6 +59,22 @@ function Dashboard({ user, signOut }) {
       setTimeout(refresh, 2000);
     }
   }, [refresh]);
+
+  if (profileLoading) {
+    return <p className="app__loading">Chargement...</p>;
+  }
+
+  if (!isComplete) {
+    return (
+      <main className="app">
+        <header className="app__header">
+          <Logo />
+          <button onClick={signOut}>Déconnexion</button>
+        </header>
+        <ProfileForm userId={user.id} mode="onboarding" onSaved={refreshProfile} />
+      </main>
+    );
+  }
 
   if (subStatus === 'loading') {
     return <p className="app__loading">Chargement...</p>;

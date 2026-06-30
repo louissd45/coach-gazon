@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabaseClient';
 
-export default function ProfileForm({ userId, onSaved }) {
+export default function ProfileForm({ userId, onSaved, mode = 'edit' }) {
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
   const [smsConsent, setSmsConsent] = useState(false);
@@ -82,10 +82,11 @@ export default function ProfileForm({ userId, onSaved }) {
 
   return (
     <form className="profile-form" onSubmit={handleSubmit}>
-      <h3>Mon profil</h3>
+      <h3>{mode === 'onboarding' ? 'Bienvenue ! Parlons de votre pelouse' : 'Mon profil'}</h3>
       <p className="profile-form__hint">
-        Ces informations permettent à l'IA d'affiner ses diagnostics et
-        recommandations selon votre pelouse.
+        {mode === 'onboarding'
+          ? 'Quelques informations pour que vos diagnostics soient dès le départ adaptés à votre pelouse.'
+          : "Ces informations permettent à l'IA d'affiner ses diagnostics et recommandations selon votre pelouse."}
       </p>
 
       <label htmlFor="phone">Numéro de téléphone</label>
@@ -104,6 +105,7 @@ export default function ProfileForm({ userId, onSaved }) {
         placeholder="Lyon"
         value={city}
         onChange={(e) => setCity(e.target.value)}
+        required
       />
 
       <label htmlFor="surface">Surface approximative (m²)</label>
@@ -159,7 +161,7 @@ export default function ProfileForm({ userId, onSaved }) {
       )}
 
       <button className="btn-primary" type="submit" disabled={saving}>
-        {saving ? 'Enregistrement...' : 'Enregistrer'}
+        {saving ? 'Enregistrement...' : mode === 'onboarding' ? 'Continuer' : 'Enregistrer'}
       </button>
     </form>
   );
