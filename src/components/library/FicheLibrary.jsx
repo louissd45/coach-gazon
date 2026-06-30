@@ -9,6 +9,21 @@ const CATEGORY_LABELS = {
 
 const CATEGORY_ORDER = ['maladie', 'entretien', 'agenda'];
 
+const MONTH_ORDER = [
+  'Agenda Janvier', 'Agenda Février', 'Agenda Mars', 'Agenda Avril',
+  'Agenda Mai', 'Agenda Juin', 'Agenda Juillet', 'Agenda Août',
+  'Agenda Septembre', 'Agenda Octobre', 'Agenda Novembre', 'Agenda Décembre',
+];
+
+function sortFiches(fiches, categorie) {
+  if (categorie === 'agenda') {
+    return [...fiches].sort(
+      (a, b) => MONTH_ORDER.indexOf(a.titre) - MONTH_ORDER.indexOf(b.titre)
+    );
+  }
+  return fiches;
+}
+
 export default function FicheLibrary({ initialTitre, onClose }) {
   const [fiches, setFiches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +66,10 @@ export default function FicheLibrary({ initialTitre, onClose }) {
     );
   }
 
-  const fichesInCategory = fiches.filter((f) => f.categorie === activeCategory);
+  const fichesInCategory = sortFiches(
+    fiches.filter((f) => f.categorie === activeCategory),
+    activeCategory
+  );
 
   return (
     <div className="fiche-library">
