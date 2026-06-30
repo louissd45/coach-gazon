@@ -1,0 +1,451 @@
+# Base de connaissances Coach Gazon
+# Climat de référence : tempéré (France métropolitaine, zones non montagneuses)
+# Ce fichier alimente la table `fiches_connaissances` (import via script Étape 3)
+# et sert de contexte unique à l'IA pour ses diagnostics.
+
+================================================================
+PARTIE 1 — AGENDA MENSUEL D'ENTRETIEN
+================================================================
+
+---
+TITRE: Agenda Janvier
+CATEGORIE: agenda
+CONTENU:
+Pelouse en dormance. Éviter de marcher dessus si gel ou sol détrempé
+(risque de compactage et de marques durables).
+Actions : aucune tonte, aucun engrais. Nettoyer et affûter le matériel
+de tonte en prévision du printemps. Vérifier l'état du système d'arrosage.
+Vigilance : taches de neige (Fusarium nivale) si couverture neigeuse
+prolongée — inspecter au dégel.
+---
+
+---
+TITRE: Agenda Février
+CATEGORIE: agenda
+CONTENU:
+Fin de dormance approche. Si redoux durable, première tonte légère
+possible en fin de mois (lame haute, 6-7cm) pour égaliser.
+Actions : scarifier légèrement si mousse visible et sol non gelé.
+Préparer les zones à regarnir (dégager débris, feuilles mortes).
+Vigilance : mousse en extension par manque de lumière hivernale.
+---
+
+---
+TITRE: Agenda Mars
+CATEGORIE: agenda
+CONTENU:
+Reprise de la croissance. C'est le mois clé pour l'aération et la
+scarification de printemps.
+Actions :
+1. Scarifier pour éliminer feutre et mousse
+2. Aérer (carottage) si sol compacté
+3. Premier apport d'engrais de printemps (riche en azote) en fin de mois
+4. Regarnir les zones dégarnies après scarification
+Vigilance : dernières gelées possibles, ne pas semer trop tôt.
+---
+
+---
+TITRE: Agenda Avril
+CATEGORIE: agenda
+CONTENU:
+Croissance active. Tontes régulières à reprendre (1x/semaine, hauteur 5-6cm).
+Actions : semis de regarnissage si non fait en mars, désherbage sélectif
+des mauvaises herbes annuelles, surveillance des premières maladies
+de printemps (rouille si humidité).
+Vigilance : alternance pluie/redoux = conditions favorables aux maladies
+fongiques précoces.
+---
+
+---
+TITRE: Agenda Mai
+CATEGORIE: agenda
+CONTENU:
+Pic de croissance du gazon. Tontes 1 à 2x/semaine.
+Actions : deuxième apport d'engrais (équilibré NPK), désherbage des
+vivaces, surveillance accrue des maladies (humidité + chaleur naissante
+= conditions idéales pour le fil rouge et la fusariose).
+Vigilance : ne jamais tondre une pelouse humide (favorise la
+propagation des champignons).
+---
+
+---
+TITRE: Agenda Juin
+CATEGORIE: agenda
+CONTENU:
+Début des fortes chaleurs possibles. Relever la hauteur de coupe à
+6-8cm pour protéger les racines et limiter l'évaporation.
+Actions : surveiller les besoins en eau, arroser tôt le matin si
+nécessaire (2-3 arrosages profonds/semaine plutôt que quotidien léger).
+Vigilance : premiers signes de stress hydrique sur sols filtrants.
+---
+
+---
+TITRE: Agenda Juillet
+CATEGORIE: agenda
+CONTENU:
+Mois à risque pour la sécheresse. Le gazon peut jaunir et entrer en
+dormance estivale (normal, pas d'inquiétude si reprise à l'automne).
+Actions : réduire la fréquence de tonte, ne pas couper trop court,
+laisser les tontes courtes au sol (mulching) pour limiter l'évaporation.
+Pas d'engrais azoté pendant les fortes chaleurs (stresse la plante).
+Vigilance : surveiller les zones de stress hydrique et les attaques
+de nuisibles favorisées par la sécheresse.
+---
+
+---
+TITRE: Agenda Août
+CATEGORIE: agenda
+CONTENU:
+Poursuite de la vigilance sécheresse, identique à juillet.
+Actions : si arrosage possible, privilégier un arrosage profond et
+peu fréquent pour favoriser un enracinement profond. Préparer la
+reprise de fin d'été (commande de semences, engrais d'automne).
+Vigilance : maladies favorisées par les orages d'été (pythium si
+chaleur + humidité combinées).
+---
+
+---
+TITRE: Agenda Septembre
+CATEGORIE: agenda
+CONTENU:
+Meilleure période de l'année pour régénérer la pelouse (sol encore
+chaud, températures plus clémentes, pluies qui reviennent).
+Actions :
+1. Scarification de fin d'été
+2. Aération si sol compacté
+3. Regarnissage des zones dégarnies (germination optimale)
+4. Apport d'engrais d'automne (faible azote, riche en potasse)
+Vigilance : c'est le mois où investir dans l'entretien a le plus
+d'impact sur l'année suivante.
+---
+
+---
+TITRE: Agenda Octobre
+CATEGORIE: agenda
+CONTENU:
+Croissance encore active mais ralentit. Dernières tontes régulières.
+Actions : ramassage des feuilles mortes (l'accumulation favorise les
+maladies et étouffe le gazon), dernier passage d'engrais d'automne si
+non fait en septembre.
+Vigilance : humidité croissante = risque de fil rouge et de rouille
+en fin de mois.
+---
+
+---
+TITRE: Agenda Novembre
+CATEGORIE: agenda
+CONTENU:
+Ralentissement net de la croissance. Dernière tonte de l'année en
+début de mois (lame haute, 5-6cm) avant l'arrêt complet.
+Actions : nettoyage final des feuilles, vérification du drainage avant
+l'hiver, rangement et entretien du matériel.
+Vigilance : éviter de marcher sur le gazon détrempé ou gelé.
+---
+
+---
+TITRE: Agenda Décembre
+CATEGORIE: agenda
+CONTENU:
+Pelouse en dormance complète.
+Actions : aucune intervention nécessaire sauf retrait ponctuel des
+feuilles mortes et débris. Profiter de la période creuse pour planifier
+le programme d'entretien de l'année suivante.
+Vigilance : neige prolongée = risque de fusariose nivale, à inspecter
+au dégel.
+---
+
+
+================================================================
+PARTIE 2 — FICHES MALADIES DU GAZON
+================================================================
+
+---
+TITRE: Fil rouge (Red Thread)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : taches roses à rouge saumon en cercles irréguliers de
+10 à 50cm. Brins d'herbe collés entre eux par de fins filaments
+rosâtres/rouges, visibles surtout le matin avec la rosée. N'attaque
+que le brin, pas la racine.
+Conditions favorables : manque d'azote, humidité prolongée (pluie,
+rosée persistante), températures douces (15-25°C), typique de fin
+d'été et d'automne sur sols pauvres.
+Causes probables : sol sous-fertilisé, tonte trop fréquente sans
+apport nutritif, mauvais drainage.
+Solution étape par étape :
+1. Apporter un engrais riche en azote à libération lente
+2. Améliorer le drainage et réduire les arrosages du soir
+3. Scarifier légèrement pour aérer le feutre
+4. Ramasser les déchets de tonte pendant l'épisode actif
+5. En dernier recours seulement : fongicide homologué gazon
+Planning : traitement azoté sous 48h, contrôle visuel à 2 semaines,
+scarification après résorption des symptômes.
+---
+
+---
+TITRE: Fusariose (Microdochium nivale)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : taches brun-orangé de quelques cm à 30cm, contours
+parfois auréolés de mycélium blanc-rosé par temps humide. Apparaît
+classiquement au dégel après une couverture de neige (fusariose
+nivale) ou en automne/hiver doux et humide.
+Conditions favorables : humidité stagnante, feutre épais, excès
+d'azote en fin de saison, mauvaise circulation de l'air, neige fondante.
+Causes probables : dernier apport d'azote trop tardif et trop fort,
+absence de scarification automnale, feuilles mortes non ramassées.
+Solution étape par étape :
+1. Retirer immédiatement feuilles mortes et débris stagnants
+2. Scarifier pour aérer le feutre dès que le sol le permet
+3. Éviter tout apport d'azote tant que les symptômes persistent
+4. Améliorer le drainage si la zone reste détrempée
+5. Fongicide homologué uniquement si attaque sévère et étendue
+Planning : intervention dès détection (la maladie progresse vite par
+temps humide), suivi hebdomadaire jusqu'à arrêt de la progression.
+---
+
+---
+TITRE: Rouille (Puccinia)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : poudre orange-rouille qui se dépose sur les chaussures
+ou les mains au contact du gazon, brins jaunâtres à orangés, aspect
+général terne et clairsemé en fin d'été.
+Conditions favorables : croissance ralentie (manque d'azote, sécheresse
+légère, tonte trop espacée), humidité nocturne, fin d'été/début d'automne.
+Causes probables : sol pauvre, gazon stressé, tontes trop rares qui
+ralentissent le renouvellement des brins.
+Solution étape par étape :
+1. Reprendre une fertilisation azotée légère pour relancer la pousse
+2. Tondre plus régulièrement pour évacuer les parties infectées
+3. Ramasser systématiquement les déchets de tonte le temps du traitement
+4. Arroser le matin pour limiter l'humidité nocturne sur le feuillage
+Planning : amélioration visible en 2-3 tontes après reprise de la
+fertilisation, soit environ 3 semaines.
+---
+
+---
+TITRE: Oïdium (Blumeria graminis)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : feutrage blanc-grisâtre poudreux à la surface des brins,
+ressemble à de la farine. Touche surtout les zones ombragées et mal
+ventilées.
+Conditions favorables : ombre dense, humidité, mauvaise circulation
+d'air, gazon en compétition avec arbres/haies pour la lumière.
+Causes probables : zone trop ombragée pour le type de gazon semé,
+végétation environnante trop dense.
+Solution étape par étape :
+1. Élaguer pour augmenter la luminosité et la circulation d'air
+2. Réduire les arrosages en fin de journée
+3. Si récurrent : envisager un regarnissage avec un mélange tolérant
+   à l'ombre
+4. Fongicide homologué seulement en cas d'extension importante
+Planning : amélioration progressive sur 3 à 4 semaines après élagage,
+résultat optimal au regarnissage suivant (septembre).
+---
+
+---
+TITRE: Pythium (fonte des semis / pythium blight)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : taches huileuses, brun foncé à noirâtres, gazon comme
+"plaqué au sol", odeur parfois désagréable. Évolution très rapide,
+peut détruire une zone en 24-48h par forte chaleur humide.
+Conditions favorables : chaleur élevée (+25°C) associée à une forte
+humidité (orages d'été, arrosage excessif), mauvais drainage, gazon
+nouvellement semé particulièrement sensible.
+Causes probables : excès d'arrosage en période chaude, drainage
+insuffisant, densité de semis trop élevée.
+Solution étape par étape :
+1. Stopper immédiatement tout arrosage
+2. Améliorer le drainage de la zone touchée (aération si possible)
+3. Ne pas tondre la zone infectée tant que les symptômes sont actifs
+   (risque de propagation par la lame)
+4. Désinfecter le matériel de tonte après usage sur une zone infectée
+5. Fongicide homologué recommandé vu la vitesse de propagation
+Planning : intervention sous 24h impérative, surveillance quotidienne
+les 5 jours suivants vu la rapidité d'évolution.
+---
+
+---
+TITRE: Mousse
+CATEGORIE: maladie
+CONTENU:
+Symptômes : tapis vert dense et spongieux qui colonise le gazon,
+brins de gazon clairsemés ou absents sous la mousse.
+Conditions favorables : manque de lumière, sol acide, compactage,
+mauvais drainage, gazon affaibli ou tondu trop court.
+Causes probables : ombre permanente, pH du sol trop bas, sol tassé
+empêchant le gazon de concurrencer la mousse.
+Solution étape par étape :
+1. Scarifier pour retirer la mousse existante
+2. Aérer (carottage) pour décompacter le sol
+3. Corriger le pH si trop acide (apport de chaux après analyse de sol)
+4. Élaguer si la zone est trop ombragée
+5. Regarnir immédiatement après scarification pour que le gazon
+   recolonise avant le retour de la mousse
+Planning : scarification idéalement en mars ou septembre, suivi du
+regarnissage à 4-6 semaines.
+---
+
+---
+TITRE: Mauvaises herbes envahissantes (pâturin, trèfle, pissenlit)
+CATEGORIE: maladie
+CONTENU:
+Symptômes : présence de plantes à feuilles larges ou de touffes de
+texture différente du gazon, zones de couleur ou de densité hétérogène.
+Conditions favorables : gazon clairsemé qui laisse de la place,
+tontes trop courtes, sol pauvre ou compacté.
+Causes probables : gazon affaibli incapable de concurrencer les
+adventices, absence de regarnissage après une zone dégarnie.
+Solution étape par étape :
+1. Désherbage manuel ou sélectif ciblé selon l'espèce
+2. Renforcer la densité du gazon par regarnissage des zones clairsemées
+3. Fertiliser pour redonner de la vigueur et de la couverture au gazon
+4. Maintenir une hauteur de tonte de 5-6cm minimum (un gazon plus haut
+   concurrence mieux les adventices)
+Planning : action continue, résultats visibles sur 1 à 2 saisons de
+gazon renforcé.
+---
+
+
+================================================================
+PARTIE 3 — FICHES ENTRETIEN (déclenchées par analyse visuelle photo)
+================================================================
+
+---
+TITRE: Stress hydrique / sécheresse
+CATEGORIE: entretien
+CONTENU:
+Indices visuels sur photo : couleur générale jaune-beige à grise,
+brins repliés sur eux-mêmes, empreintes de pas qui restent visibles
+longtemps (l'herbe ne se redresse plus), zones irrégulières souvent
+plus marquées en plein soleil ou en pente.
+Diagnostic différentiel : si le jaunissement est uniforme sur toute
+la parcelle avec saison chaude → sécheresse simple. Si zones très
+localisées et nettes → vérifier plutôt maladie ou nuisible (vers
+blancs notamment).
+Solution étape par étape :
+1. Tester la profondeur de sécheresse : enfoncer un tournevis dans
+   le sol, s'il résiste à plus de 5cm le sol est sec en profondeur
+2. Arroser en profondeur : 15-20mm d'eau (environ 15L/m²) en une fois
+   plutôt que de petits arrosages quotidiens
+3. Arroser tôt le matin (avant 9h) pour limiter l'évaporation et le
+   risque de maladie fongique
+4. Fréquence recommandée : 2 à 3 arrosages profonds par semaine en
+   période de forte chaleur, jamais d'arrosage léger quotidien
+5. Relever la hauteur de tonte à 7-8cm pour réduire l'évaporation
+   foliaire et protéger les racines
+6. Laisser les tontes au sol (mulching) pour limiter l'évaporation
+   du sol
+Planning : reprise de couleur visible sous 7 à 10 jours avec arrosage
+régulier ; en cas de dormance estivale prolongée, reprise naturelle
+attendue aux pluies d'automne, sans intervention nécessaire.
+---
+
+---
+TITRE: Scarification
+CATEGORIE: entretien
+CONTENU:
+Indices visuels sur photo : feutre brunâtre dense visible à la base
+des brins en écartant le gazon, mousse en plaques, gazon spongieux
+au toucher, eau qui stagne en surface après pluie.
+Diagnostic différentiel : à distinguer de l'aération - la scarification
+cible le feutre et la mousse en surface, l'aération cible la
+compaction du sol en profondeur. Les deux sont souvent complémentaires.
+Solution étape par étape :
+1. Tondre le gazon plus court que d'habitude juste avant (4cm)
+2. Scarifier par passages croisés (un sens puis perpendiculaire) avec
+   un scarificateur mécanique ou un râteau à gazon pour petites surfaces
+3. Ramasser intégralement les déchets de scarification (feutre, mousse)
+4. Regarnir immédiatement les zones mises à nu pour éviter que les
+   mauvaises herbes ne colonisent en premier
+5. Arroser légèrement après semis et fertiliser à libération lente
+Planning : 2 fenêtres optimales par an, mars (sol non gelé, avant
+pleine croissance) et septembre (meilleure période, sol chaud et
+humidité revenue). Éviter en période de forte chaleur ou de gel.
+---
+
+---
+TITRE: Aération
+CATEGORIE: entretien
+CONTENU:
+Indices visuels sur photo : sol dur en surface, eau stagnante après
+pluie, gazon clairsemé sur les zones de passage fréquent (allées,
+zones de jeu), croissance visiblement plus faible que le reste de
+la parcelle sur les mêmes zones.
+Diagnostic différentiel : à distinguer de la sécheresse - l'aération
+cible un sol compacté qui empêche l'eau et l'air de pénétrer, même
+quand l'arrosage est suffisant. Test simple : un sol compacté résiste
+fortement à l'enfoncement d'une fourche.
+Solution étape par étape :
+1. Aérer par temps légèrement humide (sol ni détrempé ni sec, pour
+   une pénétration optimale des dents)
+2. Pour petites surfaces : fourche à bêcher, enfoncer tous les 10-15cm
+3. Pour grandes surfaces : aérateur mécanique à dents pleines
+4. Répéter sur les zones de compaction la plus marquée (passages,
+   zones de jeu) si nécessaire
+5. Suivre idéalement d'un léger apport de sable/terreau pour maintenir
+   les canaux d'aération ouverts
+Planning : 1 à 2 fois par an, idéalement printemps et/ou automne, en
+priorité sur les zones de passage intensif.
+---
+
+---
+TITRE: Carottage
+CATEGORIE: entretien
+CONTENU:
+Indices visuels sur photo : sol très compacté en surface ET en
+profondeur, gazon en déclin général malgré un entretien suivi
+(fertilisation, arrosage), zones où l'eau ne s'infiltre presque pas.
+C'est l'aération "avancée" pour sols fortement tassés ou pelouses
+anciennes/sportives.
+Diagnostic différentiel : à réserver aux cas où une aération simple
+(dents pleines) ne suffit plus à améliorer la pénétration de l'eau ;
+le carottage extrait réellement de la terre (contrairement à
+l'aération à dents pleines qui ne fait que perforer).
+Solution étape par étape :
+1. Passer un aérateur à carottage qui extrait des "carottes" de terre
+   de quelques cm de profondeur, régulièrement espacées
+2. Laisser sécher les carottes au sol quelques jours
+3. Émietter les carottes au râteau ou les ramasser si trop nombreuses
+4. Épandre un terreau/sable de correction dans les trous laissés pour
+   améliorer durablement la structure du sol
+5. Regarnir si le carottage a mis à nu des zones clairsemées
+Planning : opération lourde à réaliser 1 fois par an maximum, idéalement
+en septembre (sol encore chaud, reprise rapide) sur sols très compactés
+ou pelouses soumises à un piétinement intensif.
+---
+
+---
+TITRE: Arrosage (gestion générale)
+CATEGORIE: entretien
+CONTENU:
+Indices visuels sur photo : permet de calibrer la fréquence/quantité
+en fonction de l'état observé - gazon vert et dense = arrosage actuel
+adapté ; jaunissement diffus = sous-arrosage ou stress thermique ;
+mousse + zones détrempées en permanence = sur-arrosage ou mauvais
+drainage.
+Règles générales :
+1. Toujours arroser en profondeur et peu fréquemment plutôt que
+   superficiellement et souvent : cela favorise un enracinement
+   profond et une meilleure résistance à la sécheresse
+2. Quantité de référence : 15-20mm d'eau par arrosage (environ
+   15L/m²), à vérifier en plaçant un récipient gradué sous
+   l'arroseur
+3. Moment idéal : tôt le matin (avant 9h), jamais le soir (favorise
+   les maladies fongiques par humidité nocturne prolongée)
+4. Fréquence selon saison :
+   - Printemps/automne (pluies naturelles) : arrosage d'appoint
+     seulement si absence de pluie 10+ jours
+   - Été normal : 1 à 2 arrosages profonds/semaine
+   - Canicule (+30°C, plusieurs jours consécutifs) : jusqu'à 3
+     arrosages profonds/semaine, voir fiche "Stress hydrique"
+5. Adapter à la nature du sol : sol sableux = arrosages plus fréquents
+   mais moins abondants ; sol argileux = arrosages plus espacés mais
+   plus longs (l'eau s'infiltre plus lentement)
+Planning : ajuster la fréquence chaque mois selon la météo réelle,
+priorité à la régularité du diagnostic photo pour détecter un
+déséquilibre avant qu'il ne devienne visible à l'œil nu.
+---

@@ -1,0 +1,279 @@
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.app__subtitle {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.dropzone {
+  border: 2px dashed #4a7c2f;
+  border-radius: 12px;
+  padding: 3rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dropzone--active {
+  background-color: #eef7e6;
+}
+
+.dropzone--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dropzone__hint {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.image-uploader__error {
+  color: #c0392b;
+  margin-top: 0.5rem;
+}
+
+.image-preview__img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.btn-primary {
+  background-color: #4a7c2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.diagnostic-result {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f7fdf2;
+  border-radius: 12px;
+}
+
+.diagnostic-result__source {
+  font-style: italic;
+  color: #666;
+}
+
+.app__error {
+  color: #c0392b;
+}
+
+.app__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.app__nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app__nav button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.app--auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app__loading {
+  text-align: center;
+  margin-top: 3rem;
+  color: #888;
+}
+
+.auth-form,
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 360px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.auth-form input,
+.profile-form input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.auth-form__error,
+.profile-form__error {
+  color: #c0392b;
+  font-size: 0.85rem;
+}
+
+.auth-form__switch {
+  background: none;
+  border: none;
+  color: #4a7c2f;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.profile-form__hint {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.profile-form__checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.history__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history__item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.history__thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.history__title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.history__date {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.history__empty {
+  color: #888;
+}
+
+.paywall {
+  max-width: 360px;
+  margin: 2rem auto;
+  text-align: center;
+  background: var(--surface-1, #f7fdf2);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+}
+
+.paywall__price {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.paywall__price span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+}
+
+.paywall__features {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.paywall__features li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.paywall__hint {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 1rem;
+}
+
+.product-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-2, #fff);
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  max-width: 360px;
+}
+
+.product-suggestion:hover {
+  border-color: #4a7c2f;
+}
+
+.product-suggestion__image {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.product-suggestion__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-suggestion__name {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-suggestion__price {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.product-suggestion__cta {
+  font-size: 0.75rem;
+  color: #4a7c2f;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
