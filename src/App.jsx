@@ -7,6 +7,7 @@ import DiagnosticHistory from './components/history/DiagnosticHistory';
 import Paywall from './components/billing/Paywall';
 import ProductSuggestion from './components/products/ProductSuggestion';
 import Logo from './components/common/Logo';
+import FicheLibrary from './components/library/FicheLibrary';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useAuth } from './context/AuthContext';
@@ -34,6 +35,8 @@ function Dashboard({ user, signOut }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
   const { status: subStatus, loading: subLoading, startCheckout, refresh } =
     useSubscription(user.id);
@@ -89,11 +92,16 @@ function Dashboard({ user, signOut }) {
       <header className="app__header">
         <Logo />
         <div className="app__nav">
+          <button onClick={() => { setShowLibrary((v) => !v); setLibraryInitialTitre(null); }}>Bibliothèque</button>
           <button onClick={() => setShowHistory((v) => !v)}>Historique</button>
           <button onClick={() => setShowProfile((v) => !v)}>Mon profil</button>
           <button onClick={signOut}>Déconnexion</button>
         </div>
       </header>
+
+      {showLibrary && (
+        <FicheLibrary initialTitre={libraryInitialTitre} onClose={() => setShowLibrary(false)} />
+      )}
 
       {showProfile && (
         <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />
@@ -101,7 +109,7 @@ function Dashboard({ user, signOut }) {
 
       {showHistory && <DiagnosticHistory userId={user.id} />}
 
-      {!showProfile && !showHistory && (
+      {!showProfile && !showHistory && !showLibrary && (
         <>
           <span className="eyebrow">Diagnostic intelligent</span>
           <p className="app__subtitle">
@@ -136,7 +144,16 @@ function Dashboard({ user, signOut }) {
                   <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.6rem', display: 'block' }}>Votre diagnostic</span>
                   <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
                   <p className="diagnostic-result__source">
-                    Fiche de référence : {result.ficheReference}
+                    Fiche de référence :{' '}
+                    <button
+                      className="diagnostic-result__fiche-link"
+                      onClick={() => {
+                        setLibraryInitialTitre(result.ficheReference);
+                        setShowLibrary(true);
+                      }}
+                    >
+                      {result.ficheReference}
+                    </button>
                   </p>
 
                   <h3>Causes probables</h3>

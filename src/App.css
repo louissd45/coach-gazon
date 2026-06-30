@@ -640,3 +640,105 @@ body::before {
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* ===================== Bibliothèque de fiches ===================== */
+
+.fiche-library {
+  background: var(--parchment-deep);
+  border: 1px solid var(--paper-line);
+  border-top: 2px solid var(--gold);
+  border-radius: 2px;
+  padding: 1.6rem;
+  margin-top: 0.5rem;
+}
+
+.fiche-library__tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1.25rem;
+  flex-wrap: wrap;
+}
+
+.fiche-library__tab {
+  background: transparent;
+  border: 1px solid var(--paper-line);
+  color: var(--moss);
+  border-radius: 3px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.fiche-library__tab--active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--parchment);
+}
+
+.fiche-library__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fiche-library__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  background: var(--parchment);
+  border: 1px solid var(--paper-line);
+  border-radius: 2px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  color: var(--forest);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.fiche-library__item:hover {
+  border-color: var(--gold);
+}
+
+.fiche-library__arrow {
+  color: var(--gold);
+  font-family: var(--font-body);
+}
+
+.fiche-library__back {
+  background: none;
+  border: none;
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.fiche-library__content {
+  white-space: pre-line;
+  line-height: 1.7;
+  font-size: 0.93rem;
+  color: var(--ink);
+}
+
+.diagnostic-result__fiche-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-style: italic;
+  font-family: var(--font-display);
+  color: var(--gold);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+}
