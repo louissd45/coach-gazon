@@ -6,6 +6,7 @@ import ProfileForm from './components/auth/ProfileForm';
 import DiagnosticHistory from './components/history/DiagnosticHistory';
 import Paywall from './components/billing/Paywall';
 import ProductSuggestion from './components/products/ProductSuggestion';
+import Logo from './components/common/Logo';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useAuth } from './context/AuthContext';
@@ -20,7 +21,7 @@ export default function App() {
   if (!user) {
     return (
       <main className="app app--auth">
-        <h1>🌱 Coach Gazon</h1>
+        <Logo />
         <AuthForm />
       </main>
     );
@@ -61,7 +62,7 @@ function Dashboard({ user, signOut }) {
     return (
       <main className="app">
         <header className="app__header">
-          <h1>🌱 Coach Gazon</h1>
+          <Logo />
           <button onClick={signOut}>Déconnexion</button>
         </header>
         <Paywall onSubscribe={startCheckout} loading={subLoading} />
@@ -84,8 +85,9 @@ function Dashboard({ user, signOut }) {
 
   return (
     <main className="app">
+      <div className="grass-edge" style={{ marginTop: '0' }} />
       <header className="app__header">
-        <h1>🌱 Coach Gazon</h1>
+        <Logo />
         <div className="app__nav">
           <button onClick={() => setShowHistory((v) => !v)}>Historique</button>
           <button onClick={() => setShowProfile((v) => !v)}>Mon profil</button>
