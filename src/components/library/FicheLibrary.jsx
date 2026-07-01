@@ -7,7 +7,9 @@ const CATEGORY_LABELS = {
   agenda: 'Agenda mensuel',
 };
 
-const CATEGORY_ORDER = ['maladie', 'entretien', 'agenda'];
+// Onglets visibles selon le contexte d'ouverture
+const TABS_FICHES = ['maladie', 'entretien'];
+const TABS_AGENDA = ['agenda'];
 
 const MONTH_ORDER = [
   'Agenda Janvier', 'Agenda Février', 'Agenda Mars', 'Agenda Avril',
@@ -73,6 +75,8 @@ export default function FicheLibrary({ initialTitre, initialTab, onClose }) {
     );
   }
 
+  const availableTabs = initialTab === 'agenda' ? TABS_AGENDA : TABS_FICHES;
+
   const fichesInCategory = sortFiches(
     fiches.filter((f) => f.categorie === activeCategory),
     activeCategory
@@ -80,20 +84,26 @@ export default function FicheLibrary({ initialTitre, initialTab, onClose }) {
 
   return (
     <div className="fiche-library">
-      <span className="eyebrow">Bibliothèque</span>
-      <h2>Fiches gazon</h2>
+      <span className="eyebrow">
+        {initialTab === 'agenda' ? 'Agenda mensuel' : 'Fiches gazon'}
+      </span>
+      <h2>
+        {initialTab === 'agenda' ? "Calendrier d'entretien" : 'Maladies & Entretiens'}
+      </h2>
 
-      <div className="fiche-library__tabs">
-        {CATEGORY_ORDER.map((cat) => (
-          <button
-            key={cat}
-            className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`}
-            onClick={() => setActiveCategory(cat)}
-          >
-            {CATEGORY_LABELS[cat]}
-          </button>
-        ))}
-      </div>
+      {availableTabs.length > 1 && (
+        <div className="fiche-library__tabs">
+          {availableTabs.map((cat) => (
+            <button
+              key={cat}
+              className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {CATEGORY_LABELS[cat]}
+            </button>
+          ))}
+        </div>
+      )}
 
       <ul className="fiche-library__list">
         {fichesInCategory.map((fiche) => (
