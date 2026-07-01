@@ -92,20 +92,14 @@ export default function ProfilePiscine({ userId, onSaved, mode = 'edit' }) {
       </select>
 
       <label>Dimensions (en mètres)</label>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-        <div>
-          <label htmlFor="longueur" style={{ fontSize: '0.7rem' }}>Longueur</label>
-          <input id="longueur" type="number" step="0.1" placeholder="10" value={longueur} onChange={(e) => setLongueur(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="largeur" style={{ fontSize: '0.7rem' }}>Largeur</label>
-          <input id="largeur" type="number" step="0.1" placeholder="4" value={largeur} onChange={(e) => setLargeur(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="profondeur" style={{ fontSize: '0.7rem' }}>Profondeur moy.</label>
-          <input id="profondeur" type="number" step="0.1" placeholder="1.5" value={profondeur} onChange={(e) => setProfondeur(e.target.value)} />
-        </div>
-      </div>
+      <label htmlFor="longueur">Longueur (m)</label>
+      <input id="longueur" type="number" step="0.1" placeholder="10" value={longueur} onChange={(e) => setLongueur(e.target.value)} />
+
+      <label htmlFor="largeur">Largeur (m)</label>
+      <input id="largeur" type="number" step="0.1" placeholder="4" value={largeur} onChange={(e) => setLargeur(e.target.value)} />
+
+      <label htmlFor="profondeur">Profondeur moyenne (m)</label>
+      <input id="profondeur" type="number" step="0.1" placeholder="1.5" value={profondeur} onChange={(e) => setProfondeur(e.target.value)} />
 
       <label htmlFor="volume">Volume (litres) — calculé automatiquement</label>
       <input
