@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import BrandLogo from '../common/BrandLogo';
 import BottomNav from '../nav/BottomNav';
-import ProfileForm from '../auth/ProfileForm';
+import ProfilePiscine from './ProfilePiscine';
 import { fetchAllFiches } from '../../services/fichesService';
 
 const POOL_TABS = ['analyse_eau', 'probleme_eau', 'entretien_piscine', 'equipement_piscine'];
@@ -40,7 +40,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
-    if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
+    if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <PiscineLibrary initialTab={libraryTab} />;
 
     return (
