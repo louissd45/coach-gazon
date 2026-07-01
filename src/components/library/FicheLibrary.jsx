@@ -24,10 +24,10 @@ function sortFiches(fiches, categorie) {
   return fiches;
 }
 
-export default function FicheLibrary({ initialTitre, onClose }) {
+export default function FicheLibrary({ initialTitre, initialTab, onClose }) {
   const [fiches, setFiches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState('maladie');
+  const [activeCategory, setActiveCategory] = useState(initialTab ?? 'maladie');
   const [selectedFiche, setSelectedFiche] = useState(null);
 
   useEffect(() => {

@@ -59,6 +59,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
+  const [showLibraryTab, setShowLibraryTab] = useState('maladie');
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
   const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } =
     useProfile(user.id);
@@ -126,7 +127,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
   const isBusy = status === STATUS.UPLOADING || status === STATUS.ANALYZING;
 
   const renderContent = () => {
-    if (showLibrary) return <FicheLibrary initialTitre={libraryInitialTitre} onClose={() => setShowLibrary(false)} />;
+    if (showLibrary) return <FicheLibrary initialTitre={libraryInitialTitre} initialTab={showLibraryTab} onClose={() => setShowLibrary(false)} />;
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showHistory) return <DiagnosticHistory userId={user.id} />;
 
@@ -203,10 +204,32 @@ function Dashboard({ user, signOut, onBackToHub }) {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (tab === 'home') { setShowHistory(false); setShowProfile(false); setShowLibrary(false); }
-    if (tab === 'calendar') { setShowLibrary(true); setLibraryInitialTitre(null); setShowHistory(false); setShowProfile(false); }
-    if (tab === 'history') { setShowHistory(true); setShowLibrary(false); setShowProfile(false); }
-    if (tab === 'profile') { setShowProfile(true); setShowHistory(false); setShowLibrary(false); }
+    if (tab === 'home') {
+      setShowHistory(false);
+      setShowProfile(false);
+      setShowLibrary(false);
+    }
+    if (tab === 'fiches') {
+      // Ouvre la bibliothèque sur l'onglet Maladies par défaut
+      setLibraryInitialTitre(null);
+      setShowLibrary(true);
+      setShowLibraryTab('maladie');
+      setShowHistory(false);
+      setShowProfile(false);
+    }
+    if (tab === 'agenda') {
+      // Ouvre la bibliothèque directement sur l'onglet Agenda mensuel
+      setLibraryInitialTitre(null);
+      setShowLibrary(true);
+      setShowLibraryTab('agenda');
+      setShowHistory(false);
+      setShowProfile(false);
+    }
+    if (tab === 'profile') {
+      setShowProfile(true);
+      setShowHistory(false);
+      setShowLibrary(false);
+    }
   };
 
   const handleActionButton = () => {

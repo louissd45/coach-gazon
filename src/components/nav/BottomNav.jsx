@@ -14,15 +14,17 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
       </button>
 
       <button
-        className={`bottom-nav__item ${activeTab === 'calendar' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('calendar')}
-        aria-label="Agenda"
+        className={`bottom-nav__item ${activeTab === 'fiches' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('fiches')}
+        aria-label="Fiches maladies"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-          <path d="M8 2V6M16 2V6M3 10H21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M4 4C4 3.4 4.4 3 5 3H15L20 8V20C20 20.6 19.6 21 19 21H5C4.4 21 4 20.6 4 20V4Z"
+            stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M15 3V8H20M8 12H16M8 16H13"
+            stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
         </svg>
-        <span>Agenda</span>
+        <span>Fiches</span>
       </button>
 
       {/* Bouton central d'action */}
@@ -37,15 +39,15 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
       </button>
 
       <button
-        className={`bottom-nav__item ${activeTab === 'history' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('history')}
-        aria-label="Historique"
+        className={`bottom-nav__item ${activeTab === 'agenda' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('agenda')}
+        aria-label="Agenda"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M21 15C21 15.6 20.6 16 20 16H8L3 21V5C3 4.4 3.4 4 4 4H20C20.6 4 21 4.4 21 5V15Z"
-            stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+          <path d="M8 2V6M16 2V6M3 10H21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
-        <span>Historique</span>
+        <span>Agenda</span>
       </button>
 
       <button
