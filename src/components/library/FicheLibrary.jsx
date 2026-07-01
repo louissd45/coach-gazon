@@ -3,13 +3,14 @@ import { fetchAllFiches } from '../../services/fichesService';
 
 const CATEGORY_LABELS = {
   maladie: 'Maladies',
+  mauvaises_herbes: 'Mauvaises herbes',
   entretien: 'Entretiens',
   renovation: 'Rénovation',
   agenda: 'Agenda mensuel',
 };
 
 // Onglets visibles selon le contexte d'ouverture
-const TABS_FICHES = ['maladie', 'entretien', 'renovation'];
+const TABS_FICHES = ['maladie', 'mauvaises_herbes', 'entretien', 'renovation'];
 const TABS_AGENDA = ['agenda'];
 
 const MONTH_ORDER = [

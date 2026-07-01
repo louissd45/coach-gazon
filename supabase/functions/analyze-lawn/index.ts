@@ -25,15 +25,15 @@ const corsHeaders = {
 const RESPONSE_SCHEMA_HINT = `
 Réponds UNIQUEMENT avec un JSON valide, sans texte autour, au format exact :
 {
-  "diagnostic": "string - nom du problème identifié",
-  "ficheReference": "string - titre de la fiche de la base de connaissances utilisée",
+  "diagnostic": "string - nom du problème identifié (maladie, mauvaise herbe précise, carence, stress hydrique...)",
+  "ficheReference": "string - titre exact de la fiche de la base de connaissances utilisée",
   "causesProbables": ["string", "..."],
   "actions": [
     {
       "etape": 1,
       "titre": "string",
       "description": "string",
-      "categorieProduit": "string ou null - une seule valeur parmi : engrais_azote, engrais_equilibre, engrais_automne, fongicide, scarificateur, aerateur, semences, arrosage, chaux, desherbant. Mets null si l'étape ne nécessite aucun produit (ex: une étape uniquement manuelle)."
+      "categorieProduit": "string ou null - une seule valeur parmi : engrais_azote, engrais_equilibre, engrais_automne, fongicide, scarificateur, aerateur, semences, arrosage, chaux, desherbant. Mets null si l'étape ne nécessite aucun produit."
     }
   ],
   "planning": [
@@ -71,9 +71,15 @@ serve(async (req) => {
       .join('\n\n');
 
     // 2. Construit le prompt système avec la base injectée
-    const systemPrompt = `Tu es un expert agronome spécialisé dans le gazon.
-Analyse la photo, identifie le problème, cite la fiche de référence parmi
-la base de connaissances ci-dessous, et propose une solution étape par étape.
+    const systemPrompt = `Tu es un expert agronome spécialisé dans le gazon et les espaces verts.
+Analyse la photo fournie et identifie avec précision :
+- Les maladies fongiques (fil rouge, fusariose, rouille, oïdium, pythium...)
+- Les mauvaises herbes présentes (pissenlit, trèfle, chiendent, pâturin, plantain, mouron, oxalis, renouée, digitaire/millet...)
+- Les problèmes d''entretien (stress hydrique, mousse, compactage, carence...)
+
+Pour les mauvaises herbes : précise l''espèce identifiée, explique pourquoi elle apparaît sur ce type de pelouse et propose uniquement des solutions mécaniques/naturelles (le désherbage sélectif chimique est interdit aux particuliers en France depuis 2019).
+
+Cite la fiche de référence exacte parmi la base de connaissances ci-dessous, et propose une solution étape par étape adaptée à ce qui est visible sur la photo.
 
 BASE DE CONNAISSANCES :
 ${knowledgeBase}
