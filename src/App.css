@@ -987,3 +987,282 @@ body::before {
 .hub__hero-logo {
   margin-bottom: 1.5rem;
 }
+
+/* ============================================================
+   Refonte Mon Expert Jardin — style app mobile natif
+   ============================================================ */
+
+/* ===================== Logo Mon Expert Jardin ===================== */
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-logo__mon {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.brand-logo__name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+/* Variante blanche sur hero */
+.hub__hero-logo .brand-logo__mon,
+.hub__hero-logo .brand-logo__name {
+  color: white;
+}
+
+/* ===================== Bottom Navigation ===================== */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: white;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: 12px;
+  transition: color 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.bottom-nav__item span {
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.bottom-nav__item--active {
+  color: var(--accent);
+}
+
+.bottom-nav__action {
+  width: 54px;
+  height: 54px;
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(27, 67, 50, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.bottom-nav__action:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(27, 67, 50, 0.45);
+}
+
+/* Espace pour que le contenu ne soit pas caché sous la bottom nav */
+.app-with-nav {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+/* ===================== Hub redesigné ===================== */
+
+.hub__header {
+  padding: 1.25rem 1.25rem 0.5rem;
+  background: white;
+}
+
+.hub__signout {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 980px;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-family: var(--font-body);
+}
+
+.hub__hero {
+  height: min(55vh, 420px);
+  min-height: 300px;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.58) 100%),
+    url('/images/hero-lawn.jpg') center / cover no-repeat,
+    linear-gradient(160deg, #1b4332, #2d6a4f);
+  display: flex;
+  align-items: flex-end;
+  padding: 0 1.25rem 2rem;
+}
+
+.hub__hero-logo {
+  margin-bottom: 1rem;
+}
+
+.hub__hero-content {
+  width: 100%;
+}
+
+.hub__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: white;
+  margin: 0.5rem 0 0.6rem;
+}
+
+.hub__hero-sub {
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 38ch;
+}
+
+.hub__section {
+  padding: 1.5rem 1.25rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hub__section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 1rem;
+}
+
+.hub__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.hub__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  border: none;
+  border-radius: 20px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-body);
+  min-height: 160px;
+  overflow: hidden;
+}
+
+.hub__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.14);
+}
+
+.hub__card--gazon {
+  background: linear-gradient(145deg, #1b4332, #2d6a4f);
+}
+
+.hub__card--piscine {
+  background: linear-gradient(145deg, #1a5276, #2e86c1);
+}
+
+.hub__card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.hub__card-icon--gazon {
+  background: rgba(255,255,255,0.18);
+}
+
+.hub__card-icon--piscine {
+  background: rgba(255,255,255,0.18);
+}
+
+.hub__card-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+.hub__card-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: white;
+  display: block;
+  margin: 0.1rem 0 0.25rem;
+}
+
+.hub__card-sub {
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.75);
+  display: block;
+}
+
+.hub__card-badge {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+}
+
+.app__nav-back {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 980px;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-family: var(--font-body);
+}

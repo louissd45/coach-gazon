@@ -6,10 +6,11 @@ import ProfileForm from './components/auth/ProfileForm';
 import DiagnosticHistory from './components/history/DiagnosticHistory';
 import Paywall from './components/billing/Paywall';
 import ProductSuggestion from './components/products/ProductSuggestion';
-import Logo from './components/common/Logo';
+import BrandLogo from './components/common/BrandLogo';
 import FicheLibrary from './components/library/FicheLibrary';
 import Hub from './components/hub/Hub';
 import ComingSoon from './components/hub/ComingSoon';
+import BottomNav from './components/nav/BottomNav';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useProfile } from './hooks/useProfile';
@@ -26,7 +27,7 @@ export default function App() {
   if (!user) {
     return (
       <main className="app app--auth">
-        <Logo />
+        <BrandLogo size={32} />
         <AuthForm />
       </main>
     );
@@ -57,6 +58,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
   const [showHistory, setShowHistory] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
+  const [activeTab, setActiveTab] = useState('home');
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
   const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } =
     useProfile(user.id);
@@ -71,8 +73,6 @@ function Dashboard({ user, signOut, onBackToHub }) {
     }
   }, [status, result]);
 
-  // Si on revient d'un paiement Stripe réussi, on revérifie le statut
-  // (le webhook met généralement à jour la base en quelques secondes).
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get('checkout') === 'success') {
       setTimeout(refresh, 2000);
@@ -87,7 +87,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
     return (
       <main className="app">
         <header className="app__header">
-          <Logo />
+          <BrandLogo size={28} />
           <button onClick={signOut}>Déconnexion</button>
         </header>
         <ProfileForm userId={user.id} mode="onboarding" onSaved={refreshProfile} />
@@ -103,7 +103,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
     return (
       <main className="app">
         <header className="app__header">
-          <Logo />
+          <BrandLogo size={28} />
           <button onClick={signOut}>Déconnexion</button>
         </header>
         <span className="eyebrow" style={{ textAlign: 'center', display: 'block', marginTop: '2rem' }}>Adhésion annuelle</span>
@@ -125,107 +125,113 @@ function Dashboard({ user, signOut, onBackToHub }) {
 
   const isBusy = status === STATUS.UPLOADING || status === STATUS.ANALYZING;
 
+  const renderContent = () => {
+    if (showLibrary) return <FicheLibrary initialTitre={libraryInitialTitre} onClose={() => setShowLibrary(false)} />;
+    if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
+    if (showHistory) return <DiagnosticHistory userId={user.id} />;
+
+    return (
+      <>
+        <span className="eyebrow">Diagnostic IA — Gazon</span>
+        <p className="app__subtitle">
+          Uploadez une photo de votre pelouse pour un diagnostic instantané
+        </p>
+
+        {!selectedFile && (
+          <ImageUploader onFileSelected={handleFileSelected} disabled={isBusy} />
+        )}
+
+        {selectedFile && (
+          <>
+            <ImagePreview file={selectedFile} onRemove={handleRemove} />
+
+            {status === STATUS.IDLE && (
+              <button className="btn-primary" onClick={handleAnalyze}>
+                Lancer le diagnostic
+              </button>
+            )}
+
+            {status === STATUS.UPLOADING && <p>Envoi de la photo...</p>}
+            {status === STATUS.ANALYZING && <p>Analyse par l'IA en cours...</p>}
+
+            {status === STATUS.ERROR && (
+              <p role="alert" className="app__error">{error}</p>
+            )}
+
+            {status === STATUS.SUCCESS && result && (
+              <section className="diagnostic-result">
+                <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.6rem', display: 'block' }}>Votre diagnostic</span>
+                <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
+                <p className="diagnostic-result__source">
+                  Fiche de référence :{' '}
+                  <button
+                    className="diagnostic-result__fiche-link"
+                    onClick={() => { setLibraryInitialTitre(result.ficheReference); setShowLibrary(true); }}
+                  >
+                    {result.ficheReference}
+                  </button>
+                </p>
+
+                <h3>Causes probables</h3>
+                <ul>
+                  {result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}
+                </ul>
+
+                <h3>Actions à entreprendre</h3>
+                <ol>
+                  {result.actions?.map((a) => (
+                    <li key={a.etape}>
+                      <strong>{a.titre}</strong> — {a.description}
+                      <ProductSuggestion product={products[a.categorieProduit]} />
+                    </li>
+                  ))}
+                </ol>
+
+                <h3>Planning</h3>
+                <ul>
+                  {result.planning?.map((p, i) => (
+                    <li key={i}><strong>{p.periode}</strong> : {p.tache}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'home') { setShowHistory(false); setShowProfile(false); setShowLibrary(false); }
+    if (tab === 'calendar') { setShowLibrary(true); setLibraryInitialTitre(null); setShowHistory(false); setShowProfile(false); }
+    if (tab === 'history') { setShowHistory(true); setShowLibrary(false); setShowProfile(false); }
+    if (tab === 'profile') { setShowProfile(true); setShowHistory(false); setShowLibrary(false); }
+  };
+
+  const handleActionButton = () => {
+    setActiveTab('home');
+    setShowHistory(false);
+    setShowProfile(false);
+    setShowLibrary(false);
+    setSelectedFile(null);
+    reset();
+  };
+
   return (
-    <main className="app">
+    <div className="app app-with-nav">
       <header className="app__header">
-        <Logo />
-        <div className="app__nav">
-          <button onClick={onBackToHub}>← Mes espaces</button>
-          <button onClick={() => { setShowLibrary((v) => !v); setLibraryInitialTitre(null); }}>Bibliothèque</button>
-          <button onClick={() => setShowHistory((v) => !v)}>Historique</button>
-          <button onClick={() => setShowProfile((v) => !v)}>Mon profil</button>
-          <button onClick={signOut}>Déconnexion</button>
-        </div>
+        <BrandLogo size={26} />
+        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
       </header>
 
-      {showLibrary && (
-        <FicheLibrary initialTitre={libraryInitialTitre} onClose={() => setShowLibrary(false)} />
-      )}
+      {renderContent()}
 
-      {showProfile && (
-        <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />
-      )}
-
-      {showHistory && <DiagnosticHistory userId={user.id} />}
-
-      {!showProfile && !showHistory && !showLibrary && (
-        <>
-          <span className="eyebrow">Diagnostic intelligent</span>
-          <p className="app__subtitle">
-            Uploadez une photo de votre pelouse pour un diagnostic instantané
-          </p>
-
-          {!selectedFile && (
-            <ImageUploader onFileSelected={handleFileSelected} disabled={isBusy} />
-          )}
-
-          {selectedFile && (
-            <>
-              <ImagePreview file={selectedFile} onRemove={handleRemove} />
-
-              {status === STATUS.IDLE && (
-                <button className="btn-primary" onClick={handleAnalyze}>
-                  Lancer le diagnostic
-                </button>
-              )}
-
-              {status === STATUS.UPLOADING && <p>Envoi de la photo...</p>}
-              {status === STATUS.ANALYZING && <p>Analyse par l'IA en cours...</p>}
-
-              {status === STATUS.ERROR && (
-                <p role="alert" className="app__error">
-                  {error}
-                </p>
-              )}
-
-              {status === STATUS.SUCCESS && result && (
-                <section className="diagnostic-result">
-                  <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.6rem', display: 'block' }}>Votre diagnostic</span>
-                  <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
-                  <p className="diagnostic-result__source">
-                    Fiche de référence :{' '}
-                    <button
-                      className="diagnostic-result__fiche-link"
-                      onClick={() => {
-                        setLibraryInitialTitre(result.ficheReference);
-                        setShowLibrary(true);
-                      }}
-                    >
-                      {result.ficheReference}
-                    </button>
-                  </p>
-
-                  <h3>Causes probables</h3>
-                  <ul>
-                    {result.causesProbables?.map((c, i) => (
-                      <li key={i}>{c}</li>
-                    ))}
-                  </ul>
-
-                  <h3>Actions à entreprendre</h3>
-                  <ol>
-                    {result.actions?.map((a) => (
-                      <li key={a.etape}>
-                        <strong>{a.titre}</strong> — {a.description}
-                        <ProductSuggestion product={products[a.categorieProduit]} />
-                      </li>
-                    ))}
-                  </ol>
-
-                  <h3>Planning</h3>
-                  <ul>
-                    {result.planning?.map((p, i) => (
-                      <li key={i}>
-                        <strong>{p.periode}</strong> : {p.tache}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </main>
+      <BottomNav
+        activeTab={activeTab}
+        onTab={handleTabChange}
+        onAction={handleActionButton}
+      />
+    </div>
   );
 }
