@@ -109,7 +109,7 @@ body::before {
   flex-shrink: 0;
 }
 
-.app {
+.app, .hub {
   max-width: 640px;
   margin: 0 auto;
   padding: 0 1.25rem 4rem;
@@ -1099,8 +1099,9 @@ body::before {
 /* ===================== Hub redesigné ===================== */
 
 .hub__header {
-  padding: 1.25rem 1.25rem 0.5rem;
+  padding: 0.6rem 1.25rem 0.4rem;
   background: white;
+  border-bottom: 1px solid var(--border);
 }
 
 .hub__signout {
@@ -1115,15 +1116,15 @@ body::before {
 }
 
 .hub__hero {
-  height: min(55vh, 420px);
-  min-height: 300px;
+  height: min(52vh, 380px);
+  min-height: 260px;
   background:
     linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.58) 100%),
     url('/images/hero-lawn.jpg') center / cover no-repeat,
     linear-gradient(160deg, #1b4332, #2d6a4f);
   display: flex;
   align-items: flex-end;
-  padding: 0 1.25rem 2rem;
+  padding: 0 1.25rem 1.75rem;
 }
 
 .hub__hero-logo {
@@ -1256,14 +1257,29 @@ body::before {
   padding: 0.2rem 0.45rem;
 }
 
+/* ===================== Header compact mobile ===================== */
+
+.app__header, .hub__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.25rem 0.4rem;
+  margin-bottom: 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+
 .app__nav-back {
   background: none;
   border: 1px solid var(--border);
   color: var(--text-dim);
   border-radius: 980px;
-  padding: 0.4rem 0.85rem;
+  padding: 0.35rem 0.75rem;
   cursor: pointer;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-family: var(--font-body);
 }
 
