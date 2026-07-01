@@ -9,11 +9,15 @@ export default function Hub({ onSelect, onSignOut }) {
       </header>
 
       <section className="hub__hero">
-        <div className="hub__hero-content">
-          <div className="hub__hero-brand">
-            <span className="hub__hero-brand-top">MON EXPERT</span>
-            <span className="hub__hero-brand-name">JARDIN</span>
+        {/* Nom centré en haut du hero, sur la zone ciel */}
+        <div className="hub__hero-top">
+          <div className="hub__hero-brand-sky">
+            <BrandLogo size={36} white />
           </div>
+        </div>
+
+        {/* Texte accroche en bas du hero */}
+        <div className="hub__hero-content">
           <h1 className="hub__title">Votre IA pour une piscine<br />et un gazon parfaits.</h1>
           <p className="hub__hero-sub">
             Diagnostic intelligent, conseils personnalisés et suivi

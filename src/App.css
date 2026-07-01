@@ -1412,3 +1412,56 @@ body::before {
   color: white;
   line-height: 1;
 }
+
+/* ===================== Logo centré sur zone ciel ===================== */
+
+.hub__hero {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hub__hero-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1.5rem;
+  width: 100%;
+}
+
+.hub__hero-brand-sky {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.hub__hero-brand-sky .brand-logo {
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.hub__hero-brand-sky .brand-logo__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hub__hero-brand-sky .brand-logo__mon {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+.hub__hero-brand-sky .brand-logo__name {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.hub__hero-content {
+  width: 100%;
+  padding-bottom: 1.5rem;
+}
