@@ -1,14 +1,9 @@
 import { useRef, useState, useCallback } from 'react';
-import {
-  MAX_FILE_SIZE_MB,
-  ACCEPTED_IMAGE_TYPES,
-} from '../../lib/constants';
+import { ACCEPTED_IMAGE_TYPES } from '../../lib/constants';
 
 /**
- * Composant de sélection/drag-drop d'une photo de pelouse.
- * Ne fait QUE la validation + remonte le File brut au parent
- * via onFileSelected. Aucune logique réseau ici (séparation des
- * responsabilités : voir useImageUpload pour l'upload réel).
+ * Composant de sélection/drag-drop d'une photo.
+ * Accepte toutes les tailles — la compression se fait dans useImageUpload.
  */
 export default function ImageUploader({ onFileSelected, disabled }) {
   const inputRef = useRef(null);
@@ -18,17 +13,11 @@ export default function ImageUploader({ onFileSelected, disabled }) {
   const validateAndEmit = useCallback(
     (file) => {
       setError(null);
-
       if (!file) return;
 
+      // Vérifie uniquement le type (plus de limite de taille — compression automatique)
       if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
         setError('Format non supporté. Utilisez JPEG, PNG ou WebP.');
-        return;
-      }
-
-      const sizeMB = file.size / (1024 * 1024);
-      if (sizeMB > MAX_FILE_SIZE_MB) {
-        setError(`Fichier trop lourd (max ${MAX_FILE_SIZE_MB} Mo).`);
         return;
       }
 
@@ -52,13 +41,8 @@ export default function ImageUploader({ onFileSelected, disabled }) {
   return (
     <div className="image-uploader">
       <div
-        className={`dropzone ${dragActive ? 'dropzone--active' : ''} ${
-          disabled ? 'dropzone--disabled' : ''
-        }`}
-        onDragOver={(e) => {
-          e.preventDefault();
-          if (!disabled) setDragActive(true);
-        }}
+        className={`dropzone ${dragActive ? 'dropzone--active' : ''} ${disabled ? 'dropzone--disabled' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); if (!disabled) setDragActive(true); }}
         onDragLeave={() => setDragActive(false)}
         onDrop={disabled ? undefined : handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
@@ -66,11 +50,10 @@ export default function ImageUploader({ onFileSelected, disabled }) {
         tabIndex={0}
       >
         <p className="dropzone__text">
-          Glissez une photo de votre pelouse ici, ou cliquez pour en choisir
-          une
+          Glissez une photo de votre pelouse ici, ou cliquez pour en choisir une
         </p>
         <p className="dropzone__hint">
-          JPEG, PNG ou WebP — {MAX_FILE_SIZE_MB} Mo max
+          JPEG, PNG ou WebP — toutes tailles acceptées
         </p>
 
         <input
@@ -84,9 +67,7 @@ export default function ImageUploader({ onFileSelected, disabled }) {
       </div>
 
       {error && (
-        <p className="image-uploader__error" role="alert">
-          {error}
-        </p>
+        <p className="image-uploader__error" role="alert">{error}</p>
       )}
     </div>
   );

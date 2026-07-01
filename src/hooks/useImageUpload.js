@@ -1,47 +1,94 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { UPLOAD_BUCKET } from '../lib/constants';
 
 /**
- * Upload un fichier vers Supabase Storage et retourne son chemin + URL publique.
- * Séparé de l'analyse IA pour pouvoir réutiliser l'upload seul (ex: galerie de photos).
+ * Compresse une image côté client via Canvas avant upload.
+ * Accepte n'importe quelle taille en entrée, produit un JPEG ≤ 4Mo.
  */
-export function useImageUpload() {
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
+async function compressImage(file, maxWidthPx = 2048, qualityJpeg = 0.85) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
 
-  const uploadImage = useCallback(async (file, userId) => {
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      let { width, height } = img;
+
+      // Redimensionne si nécessaire
+      if (width > maxWidthPx) {
+        height = Math.round((height * maxWidthPx) / width);
+        width = maxWidthPx;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return reject(new Error('Compression échouée'));
+          // Crée un File depuis le Blob avec le bon nom
+          const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+            type: 'image/jpeg',
+          });
+          resolve(compressed);
+        },
+        'image/jpeg',
+        qualityJpeg
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Impossible de lire l\'image'));
+    };
+
+    img.src = url;
+  });
+}
+
+export function useImageUpload(folder = 'lawn') {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const uploadImage = async (file, userId) => {
     setUploading(true);
-    setUploadError(null);
+    setError(null);
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${userId}/${crypto.randomUUID()}.${fileExt}`;
+      // 1. Compression automatique quelle que soit la taille d'entrée
+      let fileToUpload = file;
+      if (file.size > 1 * 1024 * 1024) {
+        // Compresse si > 1Mo
+        fileToUpload = await compressImage(file);
+      }
 
-      const { error: uploadErr } = await supabase.storage
-        .from(UPLOAD_BUCKET)
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+      // 2. Upload vers Supabase Storage
+      const ext = 'jpg';
+      const path = `${folder}/${userId}/${Date.now()}.${ext}`;
 
-      if (uploadErr) throw uploadErr;
+      const { error: uploadError } = await supabase.storage
+        .from('diagnostics')
+        .upload(path, fileToUpload, { upsert: true, contentType: 'image/jpeg' });
 
-      const { data: publicUrlData } = supabase.storage
-        .from(UPLOAD_BUCKET)
-        .getPublicUrl(filePath);
+      if (uploadError) throw uploadError;
 
-      return {
-        path: filePath,
-        publicUrl: publicUrlData.publicUrl,
-      };
+      const { data: { publicUrl } } = supabase.storage
+        .from('diagnostics')
+        .getPublicUrl(path);
+
+      return publicUrl;
     } catch (err) {
-      setUploadError(err.message ?? "Erreur lors de l'upload");
+      setError(err.message ?? 'Erreur lors de l\'upload');
       throw err;
     } finally {
       setUploading(false);
     }
-  }, []);
+  };
 
-  return { uploadImage, uploading, uploadError };
+  return { uploadImage, uploading, error };
 }
