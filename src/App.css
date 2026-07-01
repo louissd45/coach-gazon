@@ -1340,3 +1340,28 @@ body::before {
   font-size: 1rem;
   flex-shrink: 0;
 }
+
+/* ===================== Diagnostic piscine — valeurs mesurées ===================== */
+
+.pool-value-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.pool-value-label {
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.pool-value-val {
+  color: #2e86c1;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
