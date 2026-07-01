@@ -1099,7 +1099,7 @@ body::before {
 /* ===================== Hub redesigné ===================== */
 
 .hub__header {
-  padding: 0.6rem 1.25rem 0.4rem;
+  padding: calc(env(safe-area-inset-top) + 0.6rem) 1.25rem 0.5rem;
   background: white;
   border-bottom: 1px solid var(--border);
 }
@@ -1263,10 +1263,8 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.6rem 1.25rem 0.4rem;
+  padding: calc(env(safe-area-inset-top) + 0.6rem) 1.25rem 0.5rem;
   margin-bottom: 0;
-  position: sticky;
-  top: 0;
   background: var(--bg);
   z-index: 10;
   border-bottom: 1px solid var(--border);
