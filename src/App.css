@@ -1266,3 +1266,77 @@ body::before {
   font-size: 0.76rem;
   font-family: var(--font-body);
 }
+
+/* ===================== Dashboard Piscine — accès rapide ===================== */
+
+.pool-quick-access {
+  margin-top: 1rem;
+}
+
+.pool-quick-access__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 0.75rem;
+}
+
+.pool-quick-access__item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.pool-quick-access__item:hover {
+  border-color: #2e86c1;
+  transform: translateY(-1px);
+}
+
+.pool-quick-access__icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf4fb;
+  border-radius: 10px;
+}
+
+.pool-quick-access__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pool-quick-access__label {
+  margin: 0;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.pool-quick-access__desc {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 0.1rem;
+}
+
+.pool-quick-access__arrow {
+  color: #2e86c1;
+  font-size: 1rem;
+  flex-shrink: 0;
+}

@@ -11,6 +11,7 @@ import FicheLibrary from './components/library/FicheLibrary';
 import Hub from './components/hub/Hub';
 import ComingSoon from './components/hub/ComingSoon';
 import BottomNav from './components/nav/BottomNav';
+import DashboardPiscine from './components/piscine/DashboardPiscine';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useProfile } from './hooks/useProfile';
@@ -38,15 +39,7 @@ export default function App() {
   }
 
   if (space === 'piscine') {
-    return (
-      <main className="app">
-        <ComingSoon
-          title="Coach Piscine"
-          description="L'analyse de l'eau et les conseils d'entretien pour votre piscine arrivent bientôt sur Mon Coach Extérieur."
-          onBack={() => setSpace(null)}
-        />
-      </main>
-    );
+    return <DashboardPiscine user={user} signOut={signOut} onBackToHub={() => setSpace(null)} />;
   }
 
   return <Hub onSelect={setSpace} onSignOut={signOut} />;
