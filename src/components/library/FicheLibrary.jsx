@@ -32,6 +32,11 @@ export default function FicheLibrary({ initialTitre, initialTab, onClose }) {
   const [activeCategory, setActiveCategory] = useState(initialTab ?? 'maladie');
   const [selectedFiche, setSelectedFiche] = useState(null);
 
+  // Synchronise la catégorie active quand on change d'onglet dans la nav
+  useEffect(() => {
+    if (initialTab) setActiveCategory(initialTab);
+  }, [initialTab]);
+
   useEffect(() => {
     fetchAllFiches()
       .then((data) => {
