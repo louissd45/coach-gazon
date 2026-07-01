@@ -1,12 +1,3 @@
-// supabase/functions/analyze-lawn/index.ts
-//
-// Edge Function appelée depuis le frontend via supabase.functions.invoke().
-// Récupère la base de connaissances en BDD, construit le prompt, appelle
-// GPT-4o avec l'image, et renvoie une réponse JSON structurée.
-//
-// Déploiement : supabase functions deploy analyze-lawn
-// Secret requis : supabase secrets set OPENAI_API_KEY=sk-...
-
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
@@ -16,83 +7,87 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Schéma de sortie attendu de GPT-4o : on force du JSON structuré
-// pour pouvoir l'afficher proprement côté frontend (Diagnostic/Causes/Actions/Planning).
+const VISUAL_GUIDE = `
+FIL ROUGE : taches rose saumon à rouge corail, fins filaments roses entre les brins, cercles 10-50cm.
+FUSARIOSE : brun-orangé, taches circulaires nettes, mycélium blanc-rosé en bordure par temps humide.
+ROUILLE : poudre orange sur les feuilles, colore les doigts/chaussures, diffus sans cercles nets.
+OÏDIUM : feutrage blanc poudreux sur les feuilles, zones ombragées.
+PYTHIUM : brun foncé/noir huileux, brins plaqués au sol, expansion très rapide, mycélium blanc cotonneux.
+MOUSSE : vert foncé spongieux, filamenteux, entre ou à la place des brins.
+PISSENLIT : rosette dents de scie, fleur jaune ou boule blanche.
+TRÈFLE : feuilles trifoliées, tiges rampantes.
+PÂTURIN : touffes vert clair brillant, épis blancs.
+PLANTAIN : larges feuilles plates nervurées au sol.
+CHIENDENT : gazon bleu-vert rugueux en touffes denses.
+DIGITAIRE/MILLET : tiges en étoile, feuilles velues vert-jaune, épis en doigts.
+STRESS HYDRIQUE : jaune-beige uniforme, brins repliés, empreintes persistantes.`;
+
 const RESPONSE_SCHEMA_HINT = `
-Réponds UNIQUEMENT avec un JSON valide, sans texte autour, au format exact :
+Réponds UNIQUEMENT avec un JSON valide, sans texte autour :
 {
-  "diagnostic": "string - nom du problème identifié (maladie, mauvaise herbe précise, carence, stress hydrique...)",
-  "ficheReference": "string - titre exact de la fiche de la base de connaissances utilisée",
-  "causesProbables": ["string", "..."],
+  "diagnostic": "string",
+  "ficheReference": "string",
+  "signesVisuelsObserves": ["string"],
+  "causesProbables": ["string"],
   "actions": [
-    {
-      "etape": 1,
-      "titre": "string",
-      "description": "string",
-      "categorieProduit": "string ou null - une seule valeur parmi : engrais_azote, engrais_equilibre, engrais_automne, fongicide, scarificateur, aerateur, semences, arrosage, chaux, desherbant. Mets null si l'étape ne nécessite aucun produit."
-    }
+    { "etape": 1, "titre": "string", "description": "string", "categorieProduit": "string ou null" }
   ],
-  "planning": [
-    { "periode": "string (ex: Semaine 1)", "tache": "string" }
-  ],
-  "confiance": "haute | moyenne | faible"
+  "planning": [{ "periode": "string", "tache": "string" }],
+  "confiance": "haute | moyenne | faible",
+  "diagnosticAlternatif": "string ou null"
 }`;
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY non configurée côté serveur');
-    }
+    if (!OPENAI_API_KEY) throw new Error('OPENAI_API_KEY non configurée');
 
-    const { imageUrl } = await req.json();
-    if (!imageUrl) {
-      return jsonError('imageUrl manquant', 400);
-    }
+    const { imageUrl, userId } = await req.json();
+    if (!imageUrl) return jsonError('imageUrl manquant', 400);
 
-    // 1. Récupère la base de connaissances (fiches maladies/entretien) en BDD
-    const supabaseAdmin = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-    const { data: fiches, error: fichesError } = await supabaseAdmin
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    const { data: profil } = await supabaseAdmin
+      .from('users_profile')
+      .select('type_sol, type_gazon, arrosage_automatique, surface_m2, city')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const { data: fiches } = await supabaseAdmin
       .from('fiches_connaissances')
       .select('titre, contenu')
-      .limit(50);
+      .in('categorie', ['maladie', 'mauvaises_herbes', 'entretien'])
+      .limit(40);
 
-    if (fichesError) throw fichesError;
+    const knowledgeBase = (fiches ?? []).map((f) => `### ${f.titre}\n${f.contenu}`).join('\n\n');
 
-    const knowledgeBase = (fiches ?? [])
-      .map((f) => `### ${f.titre}\n${f.contenu}`)
-      .join('\n\n');
+    const profilContext = profil ? `
+PROFIL CLIENT : sol=${profil.type_sol ?? '?'}, gazon=${profil.type_gazon ?? '?'}, surface=${profil.surface_m2 ?? '?'}m², arrosage auto=${profil.arrosage_automatique ? 'oui' : 'non'}, ville=${profil.city ?? '?'}` : '';
 
-    // 2. Construit le prompt système avec la base injectée
-    const systemPrompt = `Tu es un expert agronome spécialisé dans le gazon et les espaces verts.
-Analyse la photo fournie et identifie avec précision :
-- Les maladies fongiques (fil rouge, fusariose, rouille, oïdium, pythium...)
-- Les mauvaises herbes présentes (pissenlit, trèfle, chiendent, pâturin, plantain, mouron, oxalis, renouée, digitaire/millet...)
-- Les problèmes d''entretien (stress hydrique, mousse, compactage, carence...)
+    const systemPrompt = `Tu es un expert phytopathologiste spécialisé dans les maladies du gazon.
 
-Pour les mauvaises herbes : précise l''espèce identifiée, explique pourquoi elle apparaît sur ce type de pelouse et propose uniquement des solutions mécaniques/naturelles (le désherbage sélectif chimique est interdit aux particuliers en France depuis 2019).
+MÉTHODE OBLIGATOIRE : 1) Observe la couleur dominante 2) Identifie la forme/délimitation 3) Cherche les textures (filaments, poudre, mycélium, aspect huileux) 4) Liste ce que tu VOIS réellement 5) Conclus uniquement sur ce qui est visible.
 
-Cite la fiche de référence exacte parmi la base de connaissances ci-dessous, et propose une solution étape par étape adaptée à ce qui est visible sur la photo.
+${VISUAL_GUIDE}
+
+RÈGLE : Ne diagnostique jamais FIL ROUGE sans filaments roses visibles. Ne diagnostique jamais PYTHIUM sans aspect huileux/sombre. En cas de doute → confiance "faible" + diagnosticAlternatif.
+
+Désherbage chimique interdit aux particuliers en France depuis 2019 → solutions mécaniques uniquement pour les mauvaises herbes.
+
+${profilContext}
 
 BASE DE CONNAISSANCES :
 ${knowledgeBase}
 
 ${RESPONSE_SCHEMA_HINT}`;
 
-    // 3. Appel GPT-4o avec l'image
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${OPENAI_API_KEY}` },
       body: JSON.stringify({
         model: 'gpt-4o',
         response_format: { type: 'json_object' },
@@ -101,33 +96,22 @@ ${RESPONSE_SCHEMA_HINT}`;
           {
             role: 'user',
             content: [
-              {
-                type: 'text',
-                text: 'Voici la photo de ma pelouse à diagnostiquer.',
-              },
-              { type: 'image_url', image_url: { url: imageUrl } },
+              { type: 'text', text: 'Analyse cette photo. Décris exactement ce que tu observes avant de conclure.' },
+              { type: 'image_url', image_url: { url: imageUrl, detail: 'high' } },
             ],
           },
         ],
-        max_tokens: 1500,
+        max_tokens: 2000,
       }),
     });
 
-    if (!openaiResponse.ok) {
-      const errText = await openaiResponse.text();
-      throw new Error(`Erreur OpenAI: ${errText}`);
-    }
+    if (!openaiRes.ok) throw new Error(`Erreur OpenAI: ${await openaiRes.text()}`);
 
-    const openaiData = await openaiResponse.json();
+    const openaiData = await openaiRes.json();
     const rawContent = openaiData.choices?.[0]?.message?.content;
+    if (!rawContent) throw new Error('Réponse vide de GPT-4o');
 
-    if (!rawContent) {
-      throw new Error('Réponse vide de GPT-4o');
-    }
-
-    const diagnostic = JSON.parse(rawContent);
-
-    return new Response(JSON.stringify(diagnostic), {
+    return new Response(JSON.stringify(JSON.parse(rawContent)), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
@@ -137,7 +121,7 @@ ${RESPONSE_SCHEMA_HINT}`;
   }
 });
 
-function jsonError(message: string, status: number) {
+function jsonError(message, status) {
   return new Response(JSON.stringify({ error: message }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     status,

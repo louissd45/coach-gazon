@@ -166,6 +166,21 @@ function Dashboard({ user, signOut, onBackToHub }) {
                   </button>
                 </p>
 
+                {result.signesVisuelsObserves?.length > 0 && (
+                  <>
+                    <h3>Signes observés sur la photo</h3>
+                    <ul>
+                      {result.signesVisuelsObserves.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                  </>
+                )}
+
+                {result.diagnosticAlternatif && (
+                  <p style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '0.88rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+                    💡 Diagnostic alternatif possible : {result.diagnosticAlternatif}
+                  </p>
+                )}
+
                 <h3>Causes probables</h3>
                 <ul>
                   {result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}
