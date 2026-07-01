@@ -10,8 +10,11 @@ export default function Hub({ onSelect, onSignOut }) {
 
       <section className="hub__hero">
         <div className="hub__hero-content">
-          <BrandLogo size={44} white />
-          <h1 className="hub__title">Votre IA pour un jardin<br />et une piscine parfaits.</h1>
+          <div className="hub__hero-brand">
+            <span className="hub__hero-brand-top">MON EXPERT</span>
+            <span className="hub__hero-brand-name">JARDIN</span>
+          </div>
+          <h1 className="hub__title">Votre IA pour une piscine<br />et un gazon parfaits.</h1>
           <p className="hub__hero-sub">
             Diagnostic intelligent, conseils personnalisés et suivi
             continu pour chaque espace extérieur.
