@@ -51,7 +51,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
   const [showHistory, setShowHistory] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('diagnostic');
   const [showLibraryTab, setShowLibraryTab] = useState('maladie');
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
   const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } =
@@ -197,13 +197,12 @@ function Dashboard({ user, signOut, onBackToHub }) {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (tab === 'home') {
+    if (tab === 'diagnostic') {
       setShowHistory(false);
       setShowProfile(false);
       setShowLibrary(false);
     }
     if (tab === 'fiches') {
-      // Ouvre la bibliothèque sur l'onglet Maladies par défaut
       setLibraryInitialTitre(null);
       setShowLibrary(true);
       setShowLibraryTab('maladie');
@@ -211,7 +210,6 @@ function Dashboard({ user, signOut, onBackToHub }) {
       setShowProfile(false);
     }
     if (tab === 'agenda') {
-      // Ouvre la bibliothèque directement sur l'onglet Agenda mensuel
       setLibraryInitialTitre(null);
       setShowLibrary(true);
       setShowLibraryTab('agenda');
@@ -226,7 +224,7 @@ function Dashboard({ user, signOut, onBackToHub }) {
   };
 
   const handleActionButton = () => {
-    setActiveTab('home');
+    setActiveTab('diagnostic');
     setShowHistory(false);
     setShowProfile(false);
     setShowLibrary(false);

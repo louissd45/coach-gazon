@@ -25,7 +25,7 @@ const STATUS = { IDLE: 'idle', UPLOADING: 'uploading', ANALYZING: 'analyzing', S
 const URGENCE_LABELS = { immediate: '🔴 Immédiat', '24h': '🟠 Sous 24h', cette_semaine: '🟢 Cette semaine' };
 
 export default function DashboardPiscine({ user, signOut, onBackToHub }) {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('diagnostic');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
@@ -45,7 +45,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (tab === 'home') { setShowLibrary(false); setShowProfile(false); }
+    if (tab === 'diagnostic') { setShowLibrary(false); setShowProfile(false); }
     if (tab === 'fiches') { openLibrary('analyse_eau'); }
     if (tab === 'agenda') { openLibrary('entretien_piscine'); }
     if (tab === 'profile') { setShowProfile(true); setShowLibrary(false); }

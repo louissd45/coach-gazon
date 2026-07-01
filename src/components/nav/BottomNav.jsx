@@ -2,15 +2,16 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
   return (
     <nav className="bottom-nav" role="navigation" aria-label="Navigation principale">
       <button
-        className={`bottom-nav__item ${activeTab === 'home' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('home')}
-        aria-label="Accueil"
+        className={`bottom-nav__item ${activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('diagnostic')}
+        aria-label="Diagnostic"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M3 12L12 3L21 12V20C21 20.6 20.6 21 20 21H15V16H9V21H4C3.4 21 3 20.6 3 20V12Z"
-            stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6"/>
+          <path d="M20 20L16.65 16.65" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M11 8V14M8 11H14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
         </svg>
-        <span>Accueil</span>
+        <span>Diagnostic</span>
       </button>
 
       <button
