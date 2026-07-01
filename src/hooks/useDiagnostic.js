@@ -17,7 +17,7 @@ export function useDiagnostic() {
 
       try {
         setStatus(STATUS.UPLOADING);
-        const { publicUrl } = await uploadImage(file, userId);
+        const publicUrl = await uploadImage(file, userId);
 
         setStatus(STATUS.ANALYZING);
         const diagnostic = await requestDiagnostic(publicUrl);
