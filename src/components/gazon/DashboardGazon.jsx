@@ -5,14 +5,40 @@ import ProfileForm from '../auth/ProfileForm';
 import FicheLibrary from '../library/FicheLibrary';
 import DiagnosticHistory from '../history/DiagnosticHistory';
 import DiagnosticIA from './DiagnosticIA';
+import Paywall from '../billing/Paywall';
+import { useProfile } from '../../hooks/useProfile';
+import { useSubscription } from '../../hooks/useSubscription';
 
 export default function DashboardGazon({ user, signOut, onBackToHub }) {
+  const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } = useProfile(user.id);
+  const { status: subStatus, loading: subLoading, startCheckout, refresh } = useSubscription(user.id);
   const [activeTab, setActiveTab] = useState('home');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showDiag, setShowDiag] = useState(false);
   const [libraryTab, setLibraryTab] = useState('maladie');
+
+  if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
+
+  if (!isComplete) {
+    return (
+      <main className="app">
+        <header className="app__header"><BrandLogo size={26} /><button onClick={signOut}>Déconnexion</button></header>
+        <ProfileForm userId={user.id} mode="onboarding" onSaved={refreshProfile} />
+      </main>
+    );
+  }
+
+  if (subStatus === 'inactive') {
+    return (
+      <main className="app">
+        <header className="app__header"><BrandLogo size={26} /><button onClick={signOut}>Déconnexion</button></header>
+        <span className="eyebrow" style={{ textAlign: 'center', display: 'block', marginTop: '2rem' }}>Adhésion annuelle</span>
+        <Paywall onSubscribe={startCheckout} loading={subLoading} />
+      </main>
+    );
+  }
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
