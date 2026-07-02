@@ -12,6 +12,7 @@ import Hub from './components/hub/Hub';
 import ComingSoon from './components/hub/ComingSoon';
 import BottomNav from './components/nav/BottomNav';
 import DashboardPiscine from './components/piscine/DashboardPiscine';
+import DashboardGazon from './components/gazon/DashboardGazon';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import { useSubscription } from './hooks/useSubscription';
 import { useProfile } from './hooks/useProfile';
@@ -35,7 +36,7 @@ export default function App() {
   }
 
   if (space === 'gazon') {
-    return <Dashboard user={user} signOut={signOut} onBackToHub={() => setSpace(null)} />;
+    return <DashboardGazon user={user} signOut={signOut} onBackToHub={() => setSpace(null)} />;
   }
 
   if (space === 'piscine') {
@@ -51,7 +52,8 @@ function Dashboard({ user, signOut, onBackToHub }) {
   const [showHistory, setShowHistory] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryInitialTitre, setLibraryInitialTitre] = useState(null);
-  const [activeTab, setActiveTab] = useState('diagnostic');
+  const [activeTab, setActiveTab] = useState('home');
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [showLibraryTab, setShowLibraryTab] = useState('maladie');
   const { runDiagnostic, reset, status, result, error } = useDiagnostic();
   const { profile, loading: profileLoading, refresh: refreshProfile, isComplete } =
@@ -124,12 +126,128 @@ function Dashboard({ user, signOut, onBackToHub }) {
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showHistory) return <DiagnosticHistory userId={user.id} />;
 
+    // Écran diagnostic IA — uniquement via le bouton +
+    if (showDiagnostic) {
+      return (
+        <>
+          <span className="eyebrow">Diagnostic IA — Gazon</span>
+          <p className="app__subtitle">
+            Uploadez une photo de votre pelouse pour un diagnostic instantané
+          </p>
+
+          {!selectedFile && (
+            <ImageUploader onFileSelected={handleFileSelected} disabled={isBusy} />
+          )}
+
+          {selectedFile && (
+            <>
+              <ImagePreview file={selectedFile} onRemove={handleRemove} />
+              {status === STATUS.IDLE && (
+                <button className="btn-primary" onClick={handleAnalyze}>
+                  Lancer le diagnostic
+                </button>
+              )}
+              {status === STATUS.UPLOADING && <p className="app__loading">Envoi de la photo...</p>}
+              {status === STATUS.ANALYZING && <p className="app__loading">Analyse par l'IA en cours...</p>}
+              {status === STATUS.ERROR && <p className="app__error">{error}</p>}
+
+              {status === STATUS.SUCCESS && result && (
+                <section className="diagnostic-result">
+                  {result.categorie && (
+                    <div style={{ paddingLeft: '1.5rem', paddingTop: '1.5rem' }}>
+                      <span className={`diag-badge diag-badge--${result.categorie}`}>
+                        {result.categorie === 'champignon' && '🍄 Champignon'}
+                        {result.categorie === 'maladie_fongique' && '🦠 Maladie fongique'}
+                        {result.categorie === 'mauvaise_herbe' && '🌿 Mauvaise herbe'}
+                        {result.categorie === 'secheresse' && '☀️ Sécheresse / Gazon grillé'}
+                        {result.categorie === 'urine_animal' && '🐕 Brûlure d\'urine'}
+                        {result.categorie === 'carence' && '🌱 Carence'}
+                        {result.categorie === 'mousse' && '🌱 Mousse'}
+                        {!['champignon','maladie_fongique','mauvaise_herbe','secheresse','urine_animal','carence','mousse'].includes(result.categorie) && '🔍 Diagnostic'}
+                      </span>
+                    </div>
+                  )}
+
+                  <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '0.75rem', display: 'block' }}>Votre diagnostic</span>
+                  <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
+
+                  <p style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '0.82rem', color: 'var(--text-dim)', margin: '0 0 0.5rem' }}>
+                    Confiance IA : <strong style={{ color: result.confiance === 'haute' ? 'var(--accent)' : result.confiance === 'moyenne' ? '#c2410c' : '#dc2626' }}>
+                      {result.confiance === 'haute' ? '● Haute' : result.confiance === 'moyenne' ? '● Moyenne' : '● Faible'}
+                    </strong>
+                  </p>
+
+                  {result.ficheReference && (
+                    <p className="diagnostic-result__source">
+                      Fiche de référence :{' '}
+                      <button className="diagnostic-result__fiche-link"
+                        onClick={() => { setLibraryInitialTitre(result.ficheReference); setShowLibrary(true); setShowDiagnostic(false); }}>
+                        {result.ficheReference}
+                      </button>
+                    </p>
+                  )}
+
+                  {result.signesVisuelsObserves?.length > 0 && (
+                    <>
+                      <h3>Ce que l'IA a observé</h3>
+                      <ul>{result.signesVisuelsObserves.map((s, i) => <li key={i}>{s}</li>)}</ul>
+                    </>
+                  )}
+
+                  {result.criteresIdentification && (
+                    <p style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '0.86rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+                      🔍 {result.criteresIdentification}
+                    </p>
+                  )}
+
+                  {result.diagnosticAlternatif && (
+                    <p style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '0.86rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+                      💡 Diagnostic alternatif possible : {result.diagnosticAlternatif}
+                    </p>
+                  )}
+
+                  <h3>Causes probables</h3>
+                  <ul>{result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}</ul>
+
+                  <h3>Actions à entreprendre</h3>
+                  <ol>
+                    {result.actions?.map((a) => (
+                      <li key={a.etape} style={{ marginBottom: '0.75rem' }}>
+                        <strong>{a.titre}</strong> — {a.description}
+                        {a.categorieProduit && (
+                          <div className="diag-produit-slot">
+                            <span className="diag-produit-slot__label">Produit</span>
+                            <span className="diag-produit-slot__type">{a.categorieProduit.replace(/_/g, ' ')}</span>
+                            <span className="diag-produit-slot__soon">Boutique bientôt</span>
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+
+                  <h3>Planning</h3>
+                  <ul>{result.planning?.map((p, i) => <li key={i}><strong>{p.periode}</strong> : {p.tache}</li>)}</ul>
+
+                  <div className="diag-disclaimer">
+                    <p>⚠️ Diagnostic généré par IA à titre indicatif. Ne remplace pas l'avis d'un professionnel. Mon Expert Jardin ne peut être tenu responsable des décisions prises sur la base de cette analyse.</p>
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+        </>
+      );
+    }
+
+    // Accueil par défaut — historique + notifications
     return (
       <>
-        <span className="eyebrow">Diagnostic IA — Gazon</span>
-        <p className="app__subtitle">
-          Uploadez une photo de votre pelouse pour un diagnostic instantané
-        </p>
+        <span className="eyebrow">Mon Expert Gazon</span>
+        <p className="app__subtitle">Appuyez sur <strong>+</strong> pour lancer un diagnostic IA</p>
+        <DiagnosticHistory userId={user.id} />
+      </>
+    );
+  };
 
         {!selectedFile && (
           <ImageUploader onFileSelected={handleFileSelected} disabled={isBusy} />
