@@ -27,7 +27,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
         <BrandLogo size={26} />
         <button className="app__nav-back" onClick={() => setShowBoutique(false)}>← Accueil</button>
       </header>
-      <Boutique onClose={() => setShowBoutique(false)} initialTab="gazon" />
+      <Boutique onClose={() => setShowBoutique(false)} initialTab="gazon" userId={user?.id} />
     </div>
   );
 

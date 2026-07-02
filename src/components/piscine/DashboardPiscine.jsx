@@ -49,7 +49,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
-    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" />;
+    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" userId={user.id} />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <PiscineLibrary initialTab={libraryTab} />;

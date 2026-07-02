@@ -66,7 +66,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
-    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} />;
+    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} userId={user.id} />;
     if (showDiag) return <DiagnosticIA user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <FicheLibrary initialTab={libraryTab} />;
