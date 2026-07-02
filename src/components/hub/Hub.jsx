@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import BrandLogo from '../common/BrandLogo';
 import Drawer from '../common/Drawer';
+import Boutique from '../shop/Boutique';
 
 const SPACES = [
   { id: 'gazon', title: 'Gazon', sub: 'Analyse et Soins', color: 'linear-gradient(145deg,#1b4332,#2d6a4f)' },
@@ -10,7 +11,25 @@ const SPACES = [
 export default function Hub({ onSelect, onSignOut, user }) {
   const [active, setActive] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showBoutique, setShowBoutique] = useState(false);
   const t0 = useRef(null);
+
+  const handleDrawerNav = (dest) => {
+    setDrawerOpen(false);
+    if (dest === 'gazon') onSelect('gazon');
+    if (dest === 'piscine') onSelect('piscine');
+    if (dest === 'boutique') setShowBoutique(true);
+  };
+
+  if (showBoutique) return (
+    <div className="app">
+      <header className="app__header">
+        <BrandLogo size={26} />
+        <button className="app__nav-back" onClick={() => setShowBoutique(false)}>← Accueil</button>
+      </header>
+      <Boutique onClose={() => setShowBoutique(false)} initialTab="gazon" />
+    </div>
+  );
 
   return (
     <div className="hub">
@@ -18,11 +37,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
         <Drawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
-          onNavigate={(dest) => {
-            setDrawerOpen(false);
-            if (dest === 'gazon') onSelect('gazon');
-            if (dest === 'piscine') onSelect('piscine');
-          }}
+          onNavigate={handleDrawerNav}
           onSignOut={onSignOut}
           userName={user?.email ?? ''}
         />
@@ -66,23 +81,17 @@ export default function Hub({ onSelect, onSignOut, user }) {
             padding: '0.25rem 0 0.5rem',
           }}>
             {SPACES.map((s, i) => (
-              <button
-                key={s.id}
+              <button key={s.id}
                 onClick={() => i === active ? onSelect(s.id) : setActive(i)}
                 style={{
                   flex: '0 0 85%', height: '280px',
-                  background: s.color,
-                  border: 'none', borderRadius: '24px',
-                  padding: '1.75rem',
-                  display: 'flex', flexDirection: 'column',
+                  background: s.color, border: 'none', borderRadius: '24px',
+                  padding: '1.75rem', display: 'flex', flexDirection: 'column',
                   justifyContent: 'space-between', alignItems: 'flex-start',
                   cursor: 'pointer', textAlign: 'left',
-                  opacity: i === active ? 1 : 0.6,
-                  transition: 'opacity 0.3s',
-                  boxShadow: '0 10px 36px rgba(0,0,0,0.2)',
-                  position: 'relative',
-                }}
-              >
+                  opacity: i === active ? 1 : 0.6, transition: 'opacity 0.3s',
+                  boxShadow: '0 10px 36px rgba(0,0,0,0.2)', position: 'relative',
+                }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)' }}>MON EXPERT</div>
                 <div>
                   <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em' }}>{s.title}</div>
@@ -104,11 +113,27 @@ export default function Hub({ onSelect, onSignOut, user }) {
               width: i === active ? '20px' : '8px', height: '8px',
               borderRadius: '4px',
               background: i === active ? 'var(--accent)' : 'var(--border)',
-              border: 'none', cursor: 'pointer', padding: 0,
-              transition: 'all 0.3s',
+              border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s',
             }} />
           ))}
         </div>
+
+        <button
+          onClick={() => setShowBoutique(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.85rem',
+            width: '100%', marginTop: '1.25rem',
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: '16px', padding: '1rem 1.1rem',
+            cursor: 'pointer', textAlign: 'left', fontFamily: 'var(--font-body)',
+          }}>
+          <span style={{ fontSize: '1.3rem', width: 44, height: 44, background: 'var(--bg-soft)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🛒</span>
+          <div>
+            <p style={{ margin: 0, fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--text)', fontSize: '0.97rem' }}>Boutique</p>
+            <p style={{ margin: '0.1rem 0 0', fontSize: '0.78rem', color: 'var(--text-dim)' }}>Produits gazon et piscine</p>
+          </div>
+          <span style={{ marginLeft: 'auto', color: 'var(--accent)' }}>→</span>
+        </button>
       </section>
     </div>
   );

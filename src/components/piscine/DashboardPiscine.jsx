@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import BrandLogo from '../common/BrandLogo';
 import BottomNav from '../nav/BottomNav';
 import ProfilePiscine from './ProfilePiscine';
+import Drawer from '../common/Drawer';
+import Boutique from '../shop/Boutique';
 import { fetchAllFiches } from '../../services/fichesService';
 import { supabase } from '../../services/supabaseClient';
 import { STATUS } from '../../lib/constants';
@@ -15,11 +17,23 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showDiag, setShowDiag] = useState(false);
+  const [showBoutique, setShowBoutique] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
+
+  const handleDrawerNav = (dest) => {
+    setDrawerOpen(false);
+    if (dest === 'espaces') { onBackToHub(); return; }
+    if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowDiag(false); setShowBoutique(false); }
+    if (dest === 'boutique') { setShowBoutique(true); setShowLibrary(false); setShowProfile(false); setShowDiag(false); }
+    if (dest === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setShowProfile(false); setShowDiag(false); setShowBoutique(false); setActiveTab('fiches'); }
+    if (dest === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setShowProfile(false); setShowDiag(false); setShowBoutique(false); setActiveTab('agenda'); }
+  };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setShowDiag(false);
+    setShowBoutique(false);
     if (tab === 'home') { setShowLibrary(false); setShowProfile(false); }
     if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setShowProfile(false); }
     if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setShowProfile(false); }
@@ -30,10 +44,12 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
     setShowDiag(true);
     setShowLibrary(false);
     setShowProfile(false);
+    setShowBoutique(false);
     setActiveTab('home');
   };
 
   const renderContent = () => {
+    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <PiscineLibrary initialTab={libraryTab} />;
@@ -58,9 +74,9 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
             <div><p className="dashboard-action__label">Problemes eau</p><p className="dashboard-action__desc">Eau verte, trouble, mousseuse</p></div>
             <span className="dashboard-action__arrow">→</span>
           </button>
-          <button className="dashboard-action" onClick={() => { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }}>
-            <span className="dashboard-action__icon">📅</span>
-            <div><p className="dashboard-action__label">Entretien saisonnier</p><p className="dashboard-action__desc">Ouverture, hivernage, traitement</p></div>
+          <button className="dashboard-action" onClick={() => { setShowBoutique(true); }}>
+            <span className="dashboard-action__icon">🛒</span>
+            <div><p className="dashboard-action__label">Boutique piscine</p><p className="dashboard-action__desc">Chlore, pH, algicide, bandelettes</p></div>
             <span className="dashboard-action__arrow">→</span>
           </button>
         </div>
@@ -70,9 +86,14 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
 
   return (
     <div className="app app-with-nav">
+      {drawerOpen && (
+        <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={handleDrawerNav} onSignOut={signOut} userName={user?.email ?? ''} />
+      )}
       <header className="app__header">
         <BrandLogo size={24} />
-        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)}>
+          <span /><span /><span />
+        </button>
       </header>
       {renderContent()}
       <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} />
@@ -87,21 +108,8 @@ function DiagnosticPiscine({ user, onClose }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleFileSelected = (file) => {
-    setSelectedFile(file);
-    setPreview(URL.createObjectURL(file));
-    setResult(null);
-    setError(null);
-    setStatus(STATUS.IDLE);
-  };
-
-  const handleReset = () => {
-    setSelectedFile(null);
-    setPreview(null);
-    setResult(null);
-    setError(null);
-    setStatus(STATUS.IDLE);
-  };
+  const handleFileSelected = (file) => { setSelectedFile(file); setPreview(URL.createObjectURL(file)); setResult(null); setError(null); setStatus(STATUS.IDLE); };
+  const handleReset = () => { setSelectedFile(null); setPreview(null); setResult(null); setError(null); setStatus(STATUS.IDLE); };
 
   const handleAnalyze = async () => {
     if (!selectedFile) return;
@@ -136,9 +144,7 @@ function DiagnosticPiscine({ user, onClose }) {
           <button className="image-preview__remove" onClick={handleReset}>Changer</button>
         </div>
       )}
-      {status === STATUS.IDLE && selectedFile && (
-        <button className="btn-primary" onClick={handleAnalyze} style={{ width: '100%', marginTop: '1rem' }}>Lancer le diagnostic</button>
-      )}
+      {status === STATUS.IDLE && selectedFile && <button className="btn-primary" onClick={handleAnalyze} style={{ width: '100%', marginTop: '1rem' }}>Lancer le diagnostic</button>}
       {status === STATUS.UPLOADING && <p className="diag-ia-status">Envoi de la photo...</p>}
       {status === STATUS.ANALYZING && <p className="diag-ia-status">Analyse en cours...</p>}
       {status === STATUS.ERROR && <p className="app__error">{error}</p>}
@@ -147,34 +153,16 @@ function DiagnosticPiscine({ user, onClose }) {
           <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.5rem', display: 'block' }}>Resultat</span>
           <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
           {result.valeursLues && Object.values(result.valeursLues).some(v => v) && (
-            <>
-              <h3>Valeurs mesurees</h3>
-              <div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-                {Object.entries(result.valeursLues).map(([k, v]) => v ? (
-                  <div key={k} className="pool-value-row">
-                    <span className="pool-value-label">{k}</span>
-                    <span className="pool-value-val">{v}</span>
-                  </div>
-                ) : null)}
-              </div>
-            </>
+            <><h3>Valeurs mesurees</h3><div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>{Object.entries(result.valeursLues).map(([k, v]) => v ? <div key={k} className="pool-value-row"><span className="pool-value-label">{k}</span><span className="pool-value-val">{v}</span></div> : null)}</div></>
           )}
           <h3>Causes probables</h3>
           <ul>{result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}</ul>
           <h3>Actions</h3>
-          <ol>{result.actions?.map((a) => (
-            <li key={a.etape} style={{ marginBottom: '0.75rem' }}>
-              <strong>{a.titre}</strong> — {a.description}
-            </li>
-          ))}</ol>
+          <ol>{result.actions?.map((a) => <li key={a.etape} style={{ marginBottom: '0.75rem' }}><strong>{a.titre}</strong> — {a.description}</li>)}</ol>
           <h3>Planning</h3>
           <ul>{result.planning?.map((p, i) => <li key={i}><strong>{p.periode}</strong> : {p.tache}</li>)}</ul>
-          <div className="diag-disclaimer">
-            <p>Diagnostic genere par IA a titre indicatif. Ne remplace pas un professionnel.</p>
-          </div>
-          <div style={{ padding: '0 1.5rem 1.5rem' }}>
-            <button className="btn-primary" onClick={handleReset} style={{ width: '100%' }}>Nouveau diagnostic</button>
-          </div>
+          <div className="diag-disclaimer"><p>Diagnostic genere par IA a titre indicatif. Ne remplace pas un professionnel.</p></div>
+          <div style={{ padding: '0 1.5rem 1.5rem' }}><button className="btn-primary" onClick={handleReset} style={{ width: '100%' }}>Nouveau diagnostic</button></div>
         </section>
       )}
     </div>
@@ -187,17 +175,10 @@ function PiscineLibrary({ initialTab }) {
   const [activeCategory, setActiveCategory] = useState(initialTab ?? 'analyse_eau');
   const [selectedFiche, setSelectedFiche] = useState(null);
 
-  useEffect(() => {
-    fetchAllFiches().then((data) => {
-      setFiches(data.filter((f) => POOL_TABS.includes(f.categorie)));
-      setLoading(false);
-    });
-  }, []);
-
+  useEffect(() => { fetchAllFiches().then((data) => { setFiches(data.filter((f) => POOL_TABS.includes(f.categorie))); setLoading(false); }); }, []);
   useEffect(() => { if (initialTab) setActiveCategory(initialTab); }, [initialTab]);
 
   if (loading) return <p className="app__loading">Chargement...</p>;
-
   if (selectedFiche) return (
     <div className="fiche-library">
       <button className="fiche-library__back" onClick={() => setSelectedFiche(null)}>← Retour</button>
@@ -206,27 +187,15 @@ function PiscineLibrary({ initialTab }) {
       <p className="fiche-library__content">{selectedFiche.contenu}</p>
     </div>
   );
-
   return (
     <div className="fiche-library">
       <span className="eyebrow">Fiches piscine</span>
       <h2>{POOL_LABELS[activeCategory]}</h2>
       <div className="fiche-library__tabs">
-        {POOL_TABS.map((cat) => (
-          <button key={cat} className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`} onClick={() => setActiveCategory(cat)}>
-            {POOL_LABELS[cat]}
-          </button>
-        ))}
+        {POOL_TABS.map((cat) => <button key={cat} className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`} onClick={() => setActiveCategory(cat)}>{POOL_LABELS[cat]}</button>)}
       </div>
       <ul className="fiche-library__list">
-        {fiches.filter((f) => f.categorie === activeCategory).map((fiche) => (
-          <li key={fiche.id}>
-            <button className="fiche-library__item" onClick={() => setSelectedFiche(fiche)}>
-              <span>{fiche.titre}</span>
-              <span className="fiche-library__arrow">→</span>
-            </button>
-          </li>
-        ))}
+        {fiches.filter((f) => f.categorie === activeCategory).map((fiche) => <li key={fiche.id}><button className="fiche-library__item" onClick={() => setSelectedFiche(fiche)}><span>{fiche.titre}</span><span className="fiche-library__arrow">→</span></button></li>)}
       </ul>
     </div>
   );

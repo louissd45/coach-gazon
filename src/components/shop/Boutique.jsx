@@ -31,8 +31,8 @@ const PRODUCTS = {
   ],
 };
 
-export default function Boutique({ onClose }) {
-  const [activeTab, setActiveTab] = useState('gazon');
+export default function Boutique({ onClose, initialTab = 'gazon' }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
 
