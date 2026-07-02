@@ -50,6 +50,8 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowDiag(false); setShowProfile(false); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowDiag(false); setShowProfile(false); setActiveTab('agenda'); }
   };
+
+  const handleTabChange = (tab) => {
     setActiveTab(tab);
     setShowDiag(false);
     if (tab === 'home') { setShowLibrary(false); setShowProfile(false); setShowHistory(false); }
