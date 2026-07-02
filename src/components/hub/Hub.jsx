@@ -5,76 +5,40 @@ import Drawer from '../common/Drawer';
 const SPACES = [
   {
     id: 'gazon',
-    label: 'MON EXPERT',
     title: 'Gazon',
     sub: 'Analyse & Soins',
-    desc: 'Diagnostic photo IA, fiches maladies et conseils personnalisés pour votre pelouse.',
-    gradient: 'linear-gradient(145deg, #1b4332 0%, #2d6a4f 100%)',
-    accentColor: 'rgba(82, 183, 136, 0.4)',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-        <path d="M4 26C6 22 10 18 16 17C20 16 25 17 28 15" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
-        <path d="M2 26C4 21 9 16 16 15C21 14 26 15 29 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6"/>
-        <path d="M6 26C9 22 13 20 18 20C22 20 26 22 29 20" stroke="white" strokeWidth="1.1" strokeLinecap="round" opacity="0.3"/>
-      </svg>
-    ),
+    desc: 'Diagnostic photo IA, fiches maladies et conseils personnalisés.',
+    gradient: 'linear-gradient(145deg, #1b4332, #2d6a4f)',
+    icon: '🌿',
   },
   {
     id: 'piscine',
-    label: 'MON EXPERT',
     title: 'Piscine',
     sub: 'Traitement & Entretien',
-    desc: 'Analyse eau, pH, chlore et entretien saisonnier de votre bassin.',
-    gradient: 'linear-gradient(145deg, #1a5276 0%, #2e86c1 100%)',
-    accentColor: 'rgba(46, 134, 193, 0.4)',
-    icon: (
-      <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-        <path d="M4 14C6 12 8 10 10 12C12 14 14 12 16 12C18 12 20 14 22 12C24 10 26 12 28 10" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
-        <path d="M4 20C6 18 8 16 10 18C12 20 14 18 16 18C18 18 20 20 22 18C24 16 26 18 28 16" stroke="white" strokeWidth="1.6" strokeLinecap="round" opacity="0.7"/>
-        <path d="M4 26C6 24 8 22 10 24C12 26 14 24 16 24C18 24 20 26 22 24C24 22 26 24 28 22" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
-      </svg>
-    ),
+    desc: 'Analyse eau, pH, chlore et entretien saisonnier.',
+    gradient: 'linear-gradient(145deg, #1a5276, #2e86c1)',
+    icon: '💧',
   },
 ];
 
 export default function Hub({ onSelect, onSignOut, user }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const touchStartX = useRef(null);
-
-  const handleNavigate = (dest) => {
-    setDrawerOpen(false);
-    if (dest === 'gazon') onSelect('gazon');
-    if (dest === 'piscine') onSelect('piscine');
-  };
-
-  // Swipe uniquement sur le wrapper transparent au-dessus
-  const handleSwipeStart = (e) => {
-    touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
-  };
-
-  const handleSwipeEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-    const diff = touchStartX.current - endX;
-    if (diff > 60 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
-    if (diff < -60 && activeIndex > 0) setActiveIndex(i => i - 1);
-    touchStartX.current = null;
-  };
+  const touchStart = useRef(null);
 
   return (
     <div className="hub">
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        onNavigate={handleNavigate}
+        onNavigate={(dest) => { setDrawerOpen(false); if (dest === 'gazon' || dest === 'piscine') onSelect(dest); }}
         onSignOut={onSignOut}
         userName={user?.email ?? ''}
       />
 
       <header className="hub__header">
         <BrandLogo size={26} />
-        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)} aria-label="Menu">
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)}>
           <span /><span /><span />
         </button>
       </header>
@@ -92,56 +56,92 @@ export default function Hub({ onSelect, onSignOut, user }) {
       <section className="hub__section">
         <p className="hub__section-label">Choisissez votre espace</p>
 
-        {/* Container avec overflow hidden pour l'effet peek */}
-        <div className="hub__cards-viewport">
-          {/* Track qui se déplace */}
-          <div
-            className="hub__cards-track"
-            style={{ transform: `translateX(calc(-${activeIndex * 85}% - ${activeIndex * 0.75}rem))` }}
-          >
+        {/* Carousel simple */}
+        <div
+          style={{ overflow: 'hidden', borderRadius: '24px' }}
+          onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            if (!touchStart.current) return;
+            const diff = touchStart.current - e.changedTouches[0].clientX;
+            if (diff > 50 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
+            if (diff < -50 && activeIndex > 0) setActiveIndex(i => i - 1);
+            touchStart.current = null;
+          }}
+        >
+          <div style={{
+            display: 'flex',
+            gap: '0.75rem',
+            transform: `translateX(calc(-${activeIndex * 85}% - ${activeIndex * 0.75}rem))`,
+            transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            padding: '0.25rem 0 0.5rem',
+          }}>
             {SPACES.map((space, i) => (
-              <div key={space.id} className="hub__card-slot">
-                {/* Bouton cliquable SANS logique de drag */}
-                <button
-                  className="hub__card-v2"
-                  style={{
-                    background: space.gradient,
-                    opacity: i === activeIndex ? 1 : 0.6,
-                  }}
-                  onClick={() => i === activeIndex ? onSelect(space.id) : setActiveIndex(i)}
-                >
-                  <div className="hub__card-glow" style={{ background: space.accentColor }} />
-                  <div className="hub__card-v2-badge">IA</div>
-                  <div className="hub__card-v2-icon">{space.icon}</div>
-                  <div className="hub__card-v2-body">
-                    <span className="hub__card-v2-label">{space.label}</span>
-                    <span className="hub__card-v2-title">{space.title}</span>
-                    <span className="hub__card-v2-sub">{space.sub}</span>
-                    <p className="hub__card-v2-desc">{space.desc}</p>
+              <button
+                key={space.id}
+                onClick={() => i === activeIndex ? onSelect(space.id) : setActiveIndex(i)}
+                style={{
+                  flex: '0 0 85%',
+                  height: '300px',
+                  background: space.gradient,
+                  border: 'none',
+                  borderRadius: '24px',
+                  padding: '1.75rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  opacity: i === activeIndex ? 1 : 0.6,
+                  transition: 'opacity 0.3s ease',
+                  boxShadow: '0 10px 36px rgba(0,0,0,0.2)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{space.icon}</div>
+                <div>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: '0.2rem' }}>
+                    MON EXPERT
                   </div>
-                  <div className="hub__card-v2-footer">
-                    <span className="hub__card-v2-cta">Accéder à l'espace</span>
-                    <span className="hub__card-v2-arrow">→</span>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                    {space.title}
                   </div>
-                </button>
-              </div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase', letterSpacing: '0.04em', marginTop: '0.2rem' }}>
+                    {space.sub}
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, margin: '0.75rem 0 0' }}>
+                    {space.desc}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>Accéder à l'espace</span>
+                  <span style={{ color: 'white' }}>→</span>
+                </div>
+                <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '0.65rem', fontWeight: 700, borderRadius: '8px', padding: '0.2rem 0.55rem' }}>
+                  IA
+                </div>
+              </button>
             ))}
           </div>
-
-          {/* Couche transparente pour capturer le swipe SEULEMENT */}
-          <div
-            className="hub__swipe-layer"
-            onTouchStart={handleSwipeStart}
-            onTouchEnd={handleSwipeEnd}
-          />
         </div>
 
-        <div className="hub__dots">
+        {/* Dots */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>
           {SPACES.map((_, i) => (
             <button
               key={i}
-              className={`hub__dot ${i === activeIndex ? 'hub__dot--active' : ''}`}
               onClick={() => setActiveIndex(i)}
+              style={{
+                width: i === activeIndex ? '20px' : '8px',
+                height: '8px',
+                borderRadius: '4px',
+                background: i === activeIndex ? 'var(--accent)' : 'var(--border)',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                transition: 'all 0.3s ease',
+              }}
             />
           ))}
         </div>
