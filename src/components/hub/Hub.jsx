@@ -7,12 +7,13 @@ const SPACES = [
     label: 'MON EXPERT',
     title: 'Gazon',
     sub: 'Analyse & Soins',
-    color: 'linear-gradient(145deg, #1b4332, #2d6a4f)',
+    desc: 'Votre IA pour un diagnostic précis et des conseils personnalisés.',
+    gradient: 'linear-gradient(145deg, #1b4332 0%, #2d6a4f 100%)',
     icon: (
-      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-        <path d="M4 26C4 26 6 18 12 14C16 11 22 11 26 8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M2 26C2 26 8 16 16 14C22 12 28 14 30 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
-        <path d="M6 26C10 20 14 18 20 18C24 18 28 20 30 22" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M4 26C6 22 10 18 16 17C20 16 25 17 28 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M2 26C4 21 9 16 16 15C21 14 26 15 29 12" stroke="white" strokeWidth="1.4" strokeLinecap="round" opacity="0.6"/>
+        <path d="M6 26C9 22 13 20 18 20C22 20 26 22 29 20" stroke="white" strokeWidth="1.1" strokeLinecap="round" opacity="0.35"/>
       </svg>
     ),
   },
@@ -21,11 +22,13 @@ const SPACES = [
     label: 'MON EXPERT',
     title: 'Piscine',
     sub: 'Traitement & Entretien',
-    color: 'linear-gradient(145deg, #1a5276, #2e86c1)',
+    desc: 'Analyse eau, équilibre chimique et entretien saisonnier de votre bassin.',
+    gradient: 'linear-gradient(145deg, #1a5276 0%, #2e86c1 100%)',
     icon: (
-      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-        <path d="M4 18C6 16 8 14 10 16C12 18 14 16 16 16C18 16 20 18 22 16C24 14 26 16 28 14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M4 23C6 21 8 19 10 21C12 23 14 21 16 21C18 21 20 23 22 21C24 19 26 21 28 19" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M4 16C6 14 8 12 10 14C12 16 14 14 16 14C18 14 20 16 22 14C24 12 26 14 28 12" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M4 22C6 20 8 18 10 20C12 22 14 20 16 20C18 20 20 22 22 20C24 18 26 20 28 18" stroke="white" strokeWidth="1.6" strokeLinecap="round" opacity="0.7"/>
+        <path d="M4 27C6 25 8 23 10 25C12 27 14 25 16 25C18 25 20 27 22 25C24 23 26 25 28 23" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
       </svg>
     ),
   },
@@ -33,28 +36,53 @@ const SPACES = [
 
 export default function Hub({ onSelect, onSignOut }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [dragging, setDragging] = useState(false);
   const startX = useRef(null);
+  const diffX = useRef(0);
 
-  const handleTouchStart = (e) => { startX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e) => {
+  const handleTouchStart = (e) => {
+    startX.current = e.touches[0].clientX;
+    diffX.current = 0;
+  };
+
+  const handleTouchMove = (e) => {
     if (startX.current === null) return;
-    const diff = startX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
-      if (diff < 0 && activeIndex > 0) setActiveIndex(i => i - 1);
+    diffX.current = startX.current - e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(diffX.current) > 40) {
+      if (diffX.current > 0 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
+      if (diffX.current < 0 && activeIndex > 0) setActiveIndex(i => i - 1);
     }
     startX.current = null;
+    diffX.current = 0;
+  };
+
+  const handleMouseDown = (e) => { startX.current = e.clientX; setDragging(false); };
+  const handleMouseMove = (e) => {
+    if (startX.current === null) return;
+    diffX.current = startX.current - e.clientX;
+    if (Math.abs(diffX.current) > 5) setDragging(true);
+  };
+  const handleMouseUp = () => {
+    if (Math.abs(diffX.current) > 40) {
+      if (diffX.current > 0 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
+      if (diffX.current < 0 && activeIndex > 0) setActiveIndex(i => i - 1);
+    }
+    startX.current = null;
+    diffX.current = 0;
+    setTimeout(() => setDragging(false), 10);
   };
 
   return (
     <div className="hub">
-      {/* Header */}
       <header className="hub__header">
         <BrandLogo size={26} />
         <button onClick={onSignOut} className="hub__signout">Déconnexion</button>
       </header>
 
-      {/* Photo hero FIXE au-dessus du carousel */}
+      {/* Photo hero en haut */}
       <section className="hub__hero">
         <div className="hub__hero-top">
           <div className="hub__hero-brand-sky">
@@ -63,43 +91,53 @@ export default function Hub({ onSelect, onSignOut }) {
         </div>
         <div className="hub__hero-content">
           <h1 className="hub__title">Votre IA pour une piscine<br />et un gazon parfaits.</h1>
-          <p className="hub__hero-sub">
-            Diagnostic intelligent et conseils personnalisés.
-          </p>
+          <p className="hub__hero-sub">Diagnostic intelligent et conseils personnalisés.</p>
         </div>
       </section>
 
-      {/* Carousel des espaces EN DESSOUS de la photo */}
+      {/* Carousel */}
       <section className="hub__section">
         <p className="hub__section-label">Choisissez votre espace</p>
 
         <div
-          className="hub__carousel-wrap"
+          className="hub__carousel-container"
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
-          <div
-            className="hub__carousel"
-            style={{ transform: `translateX(calc(-${activeIndex * 100}% - ${activeIndex * 0.85}rem))` }}
-          >
-            {SPACES.map((space) => (
+          {SPACES.map((space, i) => (
+            <div
+              key={space.id}
+              className={`hub__slide ${i === activeIndex ? 'hub__slide--active' : ''} ${i < activeIndex ? 'hub__slide--prev' : ''} ${i > activeIndex ? 'hub__slide--next' : ''}`}
+            >
               <button
-                key={space.id}
-                className="hub__card-full"
-                style={{ background: space.color }}
-                onClick={() => onSelect(space.id)}
+                className="hub__card-v2"
+                style={{ background: space.gradient }}
+                onClick={() => !dragging && onSelect(space.id)}
+                draggable={false}
               >
-                <div className="hub__card-full-content">
-                  <div className="hub__card-full-icon">{space.icon}</div>
-                  <span className="hub__card-full-label">{space.label}</span>
-                  <span className="hub__card-full-title">{space.title}</span>
-                  <span className="hub__card-full-sub">{space.sub}</span>
-                  <div className="hub__card-full-cta">Accéder →</div>
+                <div className="hub__card-v2-badge">IA</div>
+
+                <div className="hub__card-v2-icon">{space.icon}</div>
+
+                <div className="hub__card-v2-body">
+                  <span className="hub__card-v2-label">{space.label}</span>
+                  <span className="hub__card-v2-title">{space.title}</span>
+                  <span className="hub__card-v2-sub">{space.sub}</span>
+                  <p className="hub__card-v2-desc">{space.desc}</p>
                 </div>
-                <div className="hub__card-full-badge">IA</div>
+
+                <div className="hub__card-v2-footer">
+                  <span className="hub__card-v2-cta">Accéder à l'espace</span>
+                  <span className="hub__card-v2-arrow">→</span>
+                </div>
               </button>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Dots */}
@@ -112,8 +150,6 @@ export default function Hub({ onSelect, onSignOut }) {
             />
           ))}
         </div>
-
-        <p className="hub__hint">← Glissez pour changer →</p>
       </section>
     </div>
   );
