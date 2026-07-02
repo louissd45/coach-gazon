@@ -107,10 +107,7 @@ export default function Hub({ onSelect, onSignOut }) {
                 <div
                   key={space.id}
                   className={`hub__peek-item ${isActive ? 'hub__peek-item--active' : ''}`}
-                  style={{
-                    transform: isActive ? 'scale(1)' : 'scale(0.92)',
-                    opacity: isActive ? 1 : 0.65,
-                  }}
+                  style={{ opacity: isActive ? 1 : 0.6 }}
                 >
                   <button
                     className="hub__card-v2"
