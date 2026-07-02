@@ -1822,3 +1822,46 @@ body::before {
   margin-top: 1.5rem;
   font-size: 0.95rem;
 }
+
+/* ===================== Hub carte avec photo ===================== */
+
+.hub__card-full {
+  position: relative;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+}
+
+.hub__card-logo {
+  display: flex;
+  justify-content: center;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.hub__card-logo .brand-logo {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.hub__card-logo .brand-logo__mon {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+}
+
+.hub__card-logo .brand-logo__name {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.hub__card-full-tagline {
+  font-size: 0.86rem;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
