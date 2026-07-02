@@ -115,26 +115,19 @@ export default function Hub({ onSelect, onSignOut }) {
                     onClick={() => !isDragging && (isActive ? onSelect(space.id) : setActiveIndex(i))}
                     draggable={false}
                   >
-                    {/* Halo lumineux */}
                     <div className="hub__card-glow" style={{ background: space.accentColor }} />
-
                     <div className="hub__card-v2-badge">IA</div>
-
                     <div className="hub__card-v2-icon">{space.icon}</div>
-
                     <div className="hub__card-v2-body">
                       <span className="hub__card-v2-label">{space.label}</span>
                       <span className="hub__card-v2-title">{space.title}</span>
                       <span className="hub__card-v2-sub">{space.sub}</span>
-                      {isActive && <p className="hub__card-v2-desc">{space.desc}</p>}
+                      <p className="hub__card-v2-desc">{space.desc}</p>
                     </div>
-
-                    {isActive && (
-                      <div className="hub__card-v2-footer">
-                        <span className="hub__card-v2-cta">Accéder à l'espace</span>
-                        <span className="hub__card-v2-arrow">→</span>
-                      </div>
-                    )}
+                    <div className="hub__card-v2-footer">
+                      <span className="hub__card-v2-cta">Accéder à l'espace</span>
+                      <span className="hub__card-v2-arrow">→</span>
+                    </div>
                   </button>
                 </div>
               );

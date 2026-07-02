@@ -2084,7 +2084,8 @@ body::before {
 .hub__card-v2 {
   border-radius: 28px !important;
   width: 100%;
-  min-height: 280px;
+  height: 300px;
+  min-height: 300px;
   border: none;
   padding: 1.75rem;
   display: flex;
