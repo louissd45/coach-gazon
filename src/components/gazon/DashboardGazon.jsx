@@ -7,6 +7,7 @@ import DiagnosticHistory from '../history/DiagnosticHistory';
 import DiagnosticIA from './DiagnosticIA';
 import Paywall from '../billing/Paywall';
 import Drawer from '../common/Drawer';
+import Boutique from '../shop/Boutique';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -20,6 +21,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const [showDiag, setShowDiag] = useState(false);
   const [libraryTab, setLibraryTab] = useState('maladie');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showBoutique, setShowBoutique] = useState(false);
 
   if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
 
@@ -40,6 +42,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
     if (dest === 'espaces') { onBackToHub(); return; }
+    if (dest === 'boutique') { setShowBoutique(true); setShowLibrary(false); setShowProfile(false); setShowHistory(false); setShowDiag(false); }
     if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowHistory(false); setShowDiag(false); setActiveTab('profile'); }
     if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('agenda'); }
@@ -63,6 +66,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
+    if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} />;
     if (showDiag) return <DiagnosticIA user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <FicheLibrary initialTab={libraryTab} />;
