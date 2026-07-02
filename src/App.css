@@ -1865,3 +1865,27 @@ body::before {
   margin-bottom: 1.25rem;
   font-style: italic;
 }
+
+/* ===================== Carousel sous la photo ===================== */
+
+.hub__card-full {
+  flex: 0 0 100%;
+  min-height: 200px !important;
+  border-radius: 20px !important;
+  padding: 0 !important;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+
+.hub__card-full-content {
+  padding: 1.5rem !important;
+}
+
+.hub__card-full-tagline {
+  display: none;
+}
+
+.hub__card-logo {
+  display: none;
+}
