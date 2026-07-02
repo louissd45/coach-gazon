@@ -39,7 +39,6 @@ const SPACES = [
 
 export default function Hub({ onSelect, onSignOut, user }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const startX = useRef(null);
   const diffX = useRef(0);
@@ -54,25 +53,32 @@ export default function Hub({ onSelect, onSignOut, user }) {
   const prev = () => { if (activeIndex > 0) setActiveIndex(i => i - 1); };
   const next = () => { if (activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1); };
 
-  const handleTouchStart = (e) => { startX.current = e.touches[0].clientX; diffX.current = 0; };
-  const handleTouchMove = (e) => { if (startX.current !== null) diffX.current = startX.current - e.touches[0].clientX; };
+  const wasDragging = useRef(false);
+
+  const handleTouchStart = (e) => { startX.current = e.touches[0].clientX; diffX.current = 0; wasDragging.current = false; };
+  const handleTouchMove = (e) => {
+    if (startX.current !== null) {
+      diffX.current = startX.current - e.touches[0].clientX;
+      if (Math.abs(diffX.current) > 10) wasDragging.current = true;
+    }
+  };
   const handleTouchEnd = () => {
     if (diffX.current > 45) next();
     else if (diffX.current < -45) prev();
     startX.current = null; diffX.current = 0;
+    setTimeout(() => { wasDragging.current = false; }, 100);
   };
 
-  const handleMouseDown = (e) => { startX.current = e.clientX; diffX.current = 0; setIsDragging(false); };
+  const handleMouseDown = (e) => { startX.current = e.clientX; diffX.current = 0; wasDragging.current = false; };
   const handleMouseMove = (e) => {
     if (startX.current === null) return;
     diffX.current = startX.current - e.clientX;
-    if (Math.abs(diffX.current) > 8) setIsDragging(true);
+    if (Math.abs(diffX.current) > 10) wasDragging.current = true;
   };
   const handleMouseUp = () => {
     if (diffX.current > 45) next();
     else if (diffX.current < -45) prev();
     startX.current = null; diffX.current = 0;
-    setTimeout(() => setIsDragging(false), 50);
   };
 
   return (
@@ -131,7 +137,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
                   <button
                     className="hub__card-v2"
                     style={{ background: space.gradient }}
-                    onClick={() => !isDragging && (isActive ? onSelect(space.id) : setActiveIndex(i))}
+                    onClick={() => { if (!wasDragging.current) { isActive ? onSelect(space.id) : setActiveIndex(i); } }}
                     draggable={false}
                   >
                     <div className="hub__card-glow" style={{ background: space.accentColor }} />
