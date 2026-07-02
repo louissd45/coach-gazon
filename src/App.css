@@ -2051,3 +2051,43 @@ body::before {
   font-size: 1.1rem;
   color: rgba(255,255,255,0.85);
 }
+
+/* ===================== Carousel peek premium ===================== */
+
+.hub__peek-wrap {
+  overflow: hidden;
+  cursor: grab;
+  padding: 0.5rem 0 0.75rem;
+  margin: 0 -0.5rem;
+}
+
+.hub__peek-wrap:active { cursor: grabbing; }
+
+.hub__peek-track {
+  display: flex;
+  gap: 0.75rem;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  padding: 0 1.25rem;
+}
+
+.hub__peek-item {
+  flex: 0 0 80%;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.45s ease;
+}
+
+.hub__peek-item--active {
+  flex: 0 0 80%;
+}
+
+.hub__card-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+}
