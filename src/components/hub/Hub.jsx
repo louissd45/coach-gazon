@@ -46,8 +46,9 @@ export default function Hub({ onSelect, onSignOut, user }) {
 
   const handleNavigate = (dest) => {
     setDrawerOpen(false);
-    if (dest === 'espaces') return;
-    if (dest === 'profil') onSelect('profil');
+    if (dest === 'gazon') onSelect('gazon');
+    if (dest === 'piscine') onSelect('piscine');
+    // Les autres destinations (profil, boutique...) seront gérées depuis les dashboards
   };
 
   const prev = () => { if (activeIndex > 0) setActiveIndex(i => i - 1); };
