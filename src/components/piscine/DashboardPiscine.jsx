@@ -4,106 +4,95 @@ import BottomNav from '../nav/BottomNav';
 import ProfilePiscine from './ProfilePiscine';
 import { fetchAllFiches } from '../../services/fichesService';
 import { supabase } from '../../services/supabaseClient';
+import { STATUS } from '../../lib/constants';
+import ImageUploader from '../upload/ImageUploader';
 
 const POOL_TABS = ['analyse_eau', 'probleme_eau', 'entretien_piscine', 'equipement_piscine'];
-const POOL_LABELS = {
-  analyse_eau: 'Analyse eau',
-  probleme_eau: 'Problèmes',
-  entretien_piscine: 'Entretien',
-  equipement_piscine: 'Équipements',
-};
-
-const QUICK_ACCESS = [
-  { tab: 'analyse_eau', label: "Analyse de l'eau", icon: '💧', desc: 'pH, chlore, TAC, TH, stabilisant' },
-  { tab: 'probleme_eau', label: "Problèmes d'eau", icon: '🔍', desc: 'Eau verte, trouble, mousseuse, taches' },
-  { tab: 'entretien_piscine', label: 'Entretien saisonnier', icon: '🗓️', desc: 'Ouverture, hivernage, traitement choc' },
-  { tab: 'equipement_piscine', label: 'Équipements', icon: '⚙️', desc: 'Filtration, robot, bâche' },
-];
-
-const STATUS = { IDLE: 'idle', UPLOADING: 'uploading', ANALYZING: 'analyzing', SUCCESS: 'success', ERROR: 'error' };
-
-const URGENCE_LABELS = { immediate: '🔴 Immédiat', '24h': '🟠 Sous 24h', cette_semaine: '🟢 Cette semaine' };
+const POOL_LABELS = { analyse_eau: 'Analyse eau', probleme_eau: 'Problemes', entretien_piscine: 'Entretien', equipement_piscine: 'Equipements' };
 
 export default function DashboardPiscine({ user, signOut, onBackToHub }) {
-  const [activeTab, setActiveTab] = useState('diagnostic');
+  const [activeTab, setActiveTab] = useState('home');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showDiag, setShowDiag] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
 
-  // Diagnostic photo
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setShowDiag(false);
+    if (tab === 'home') { setShowLibrary(false); setShowProfile(false); }
+    if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setShowProfile(false); }
+    if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setShowProfile(false); }
+    if (tab === 'profile') { setShowProfile(true); setShowLibrary(false); }
+  };
+
+  const handleActionButton = () => {
+    setShowDiag(true);
+    setShowLibrary(false);
+    setShowProfile(false);
+    setActiveTab('home');
+  };
+
+  const renderContent = () => {
+    if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
+    if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
+    if (showLibrary) return <PiscineLibrary initialTab={libraryTab} />;
+    return (
+      <div className="dashboard-home">
+        <span className="eyebrow">Mon Expert Piscine</span>
+        <h2 className="dashboard-home__title">Bonjour</h2>
+        <p className="app__subtitle">Que souhaitez-vous faire ?</p>
+        <div className="dashboard-actions">
+          <button className="dashboard-action dashboard-action--primary" onClick={handleActionButton}>
+            <span className="dashboard-action__icon">🔍</span>
+            <div><p className="dashboard-action__label">Diagnostic IA</p><p className="dashboard-action__desc">Analyser eau, bandelette ou parois</p></div>
+            <span className="dashboard-action__arrow">→</span>
+          </button>
+          <button className="dashboard-action" onClick={() => { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }}>
+            <span className="dashboard-action__icon">💧</span>
+            <div><p className="dashboard-action__label">Analyse de eau</p><p className="dashboard-action__desc">pH, chlore, TAC, TH, stabilisant</p></div>
+            <span className="dashboard-action__arrow">→</span>
+          </button>
+          <button className="dashboard-action" onClick={() => { setLibraryTab('probleme_eau'); setShowLibrary(true); setActiveTab('fiches'); }}>
+            <span className="dashboard-action__icon">🔎</span>
+            <div><p className="dashboard-action__label">Problemes eau</p><p className="dashboard-action__desc">Eau verte, trouble, mousseuse</p></div>
+            <span className="dashboard-action__arrow">→</span>
+          </button>
+          <button className="dashboard-action" onClick={() => { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }}>
+            <span className="dashboard-action__icon">📅</span>
+            <div><p className="dashboard-action__label">Entretien saisonnier</p><p className="dashboard-action__desc">Ouverture, hivernage, traitement</p></div>
+            <span className="dashboard-action__arrow">→</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="app app-with-nav">
+      <header className="app__header">
+        <BrandLogo size={24} />
+        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
+      </header>
+      {renderContent()}
+      <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} />
+    </div>
+  );
+}
+
+function DiagnosticPiscine({ user, onClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [status, setStatus] = useState(STATUS.IDLE);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const openLibrary = (tab) => {
-    setLibraryTab(tab);
-    setShowLibrary(true);
-    setShowProfile(false);
-  };
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    if (tab === 'diagnostic') { setShowLibrary(false); setShowProfile(false); }
-    if (tab === 'fiches') { openLibrary('analyse_eau'); }
-    if (tab === 'agenda') { openLibrary('entretien_piscine'); }
-    if (tab === 'profile') { setShowProfile(true); setShowLibrary(false); }
-  };
-
-  const handleFileSelected = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileSelected = (file) => {
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
     setResult(null);
     setError(null);
     setStatus(STATUS.IDLE);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
-    setSelectedFile(file);
-    setPreview(URL.createObjectURL(file));
-    setResult(null);
-    setError(null);
-    setStatus(STATUS.IDLE);
-  };
-
-  const handleAnalyze = async () => {
-    if (!selectedFile) return;
-    setStatus(STATUS.UPLOADING);
-    setError(null);
-
-    try {
-      // Upload image vers Supabase Storage
-      const ext = selectedFile.name.split('.').pop();
-      const path = `pool/${user.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from('diagnostics')
-        .upload(path, selectedFile, { upsert: true });
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage.from('diagnostics').getPublicUrl(path);
-
-      setStatus(STATUS.ANALYZING);
-
-      // Appel Edge Function analyze-pool
-      const { data, error: fnError } = await supabase.functions.invoke('analyze-pool', {
-        body: { imageUrl: publicUrl, userId: user.id },
-      });
-
-      if (fnError) throw fnError;
-      if (data?.error) throw new Error(data.error);
-
-      setResult(data);
-      setStatus(STATUS.SUCCESS);
-    } catch (err) {
-      setError(err.message ?? 'Erreur lors du diagnostic');
-      setStatus(STATUS.ERROR);
-    }
   };
 
   const handleReset = () => {
@@ -114,162 +103,80 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
     setStatus(STATUS.IDLE);
   };
 
-  const renderContent = () => {
-    if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
-    if (showLibrary) return <PiscineLibrary initialTab={libraryTab} />;
-
-    return (
-      <>
-        <span className="eyebrow">Diagnostic IA — Piscine</span>
-        <p className="app__subtitle">
-          Uploadez une photo de votre eau, d'une bandelette de test ou de vos parois pour un diagnostic instantané adapté à votre piscine.
-        </p>
-
-        {/* Zone d'upload */}
-        {!selectedFile && (
-          <div
-            className="dropzone"
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-            onClick={() => document.getElementById('pool-upload').click()}
-          >
-            <p className="dropzone__text">📷 Eau, bandelette ou parois</p>
-            <p className="dropzone__hint">Glissez ou cliquez pour sélectionner</p>
-            <input
-              id="pool-upload"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleFileSelected}
-            />
-          </div>
-        )}
-
-        {/* Aperçu + actions */}
-        {selectedFile && status !== STATUS.SUCCESS && (
-          <div className="image-preview">
-            <img src={preview} alt="Aperçu" className="image-preview__img" />
-            <button className="image-preview__remove" onClick={handleReset}>Changer de photo</button>
-          </div>
-        )}
-
-        {status === STATUS.IDLE && selectedFile && (
-          <button className="btn-primary" onClick={handleAnalyze} style={{ marginTop: '1rem', width: '100%' }}>
-            Lancer le diagnostic
-          </button>
-        )}
-
-        {status === STATUS.UPLOADING && <p style={{ textAlign: 'center', color: 'var(--text-dim)', marginTop: '1rem' }}>Envoi de la photo...</p>}
-        {status === STATUS.ANALYZING && <p style={{ textAlign: 'center', color: 'var(--text-dim)', marginTop: '1rem' }}>Analyse par l'IA en cours...</p>}
-
-        {status === STATUS.ERROR && (
-          <p className="app__error" style={{ marginTop: '1rem' }}>{error}</p>
-        )}
-
-        {/* Résultat diagnostic */}
-        {status === STATUS.SUCCESS && result && (
-          <div className="diagnostic-result" style={{ marginTop: '1.5rem' }}>
-            <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.5rem', display: 'block' }}>
-              Votre diagnostic piscine
-            </span>
-            <h2 style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', paddingTop: 0 }}>
-              {result.diagnostic}
-            </h2>
-
-            {/* Valeurs lues sur le test */}
-            {result.valeursLues && Object.values(result.valeursLues).some(v => v) && (
-              <>
-                <h3>Valeurs mesurées</h3>
-                <div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-                  {Object.entries(result.valeursLues).map(([key, val]) =>
-                    val ? (
-                      <div key={key} className="pool-value-row">
-                        <span className="pool-value-label">{key}</span>
-                        <span className="pool-value-val">{val}</span>
-                      </div>
-                    ) : null
-                  )}
-                </div>
-              </>
-            )}
-
-            <h3>Causes probables</h3>
-            <ul style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-              {result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}
-            </ul>
-
-            <h3>Actions à entreprendre</h3>
-            <ol style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-              {result.actions?.map((a) => (
-                <li key={a.etape} style={{ marginBottom: '0.75rem' }}>
-                  <strong>{a.titre}</strong>
-                  {a.urgence && (
-                    <span style={{ fontSize: '0.72rem', marginLeft: '0.5rem', color: 'var(--text-dim)' }}>
-                      {URGENCE_LABELS[a.urgence]}
-                    </span>
-                  )}
-                  <br />{a.description}
-                </li>
-              ))}
-            </ol>
-
-            <h3>Planning</h3>
-            <ul style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', paddingBottom: '1.5rem' }}>
-              {result.planning?.map((p, i) => (
-                <li key={i}><strong>{p.periode}</strong> : {p.tache}</li>
-              ))}
-            </ul>
-
-            {result.recommandationTest && (
-              <p style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', paddingBottom: '1.5rem', color: 'var(--text-dim)', fontSize: '0.88rem', fontStyle: 'italic' }}>
-                💡 {result.recommandationTest}
-              </p>
-            )}
-
-            <div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem', paddingBottom: '1.5rem' }}>
-              <button className="btn-primary" onClick={handleReset} style={{ width: '100%' }}>
-                Nouveau diagnostic
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Accès rapide fiches */}
-        {status === STATUS.IDLE && !selectedFile && (
-          <div className="pool-quick-access" style={{ marginTop: '1.5rem' }}>
-            <p className="pool-quick-access__title">Fiches techniques</p>
-            {QUICK_ACCESS.map((item) => (
-              <button
-                key={item.tab}
-                className="pool-quick-access__item"
-                onClick={() => { openLibrary(item.tab); setActiveTab('fiches'); }}
-              >
-                <span className="pool-quick-access__icon">{item.icon}</span>
-                <div className="pool-quick-access__text">
-                  <p className="pool-quick-access__label">{item.label}</p>
-                  <p className="pool-quick-access__desc">{item.desc}</p>
-                </div>
-                <span className="pool-quick-access__arrow">→</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </>
-    );
+  const handleAnalyze = async () => {
+    if (!selectedFile) return;
+    setStatus(STATUS.UPLOADING);
+    try {
+      const path = `pool/${user.id}/${Date.now()}.jpg`;
+      const { error: uploadError } = await supabase.storage.from('diagnostics').upload(path, selectedFile, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('diagnostics').getPublicUrl(path);
+      setStatus(STATUS.ANALYZING);
+      const { data, error: fnError } = await supabase.functions.invoke('analyze-pool', { body: { imageUrl: publicUrl, userId: user.id } });
+      if (fnError) throw fnError;
+      if (data?.error) throw new Error(data.error);
+      setResult(data);
+      setStatus(STATUS.SUCCESS);
+    } catch (err) {
+      setError(err.message ?? 'Erreur diagnostic');
+      setStatus(STATUS.ERROR);
+    }
   };
 
   return (
-    <div className="app app-with-nav">
-      <header className="app__header">
-        <BrandLogo size={26} />
-        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
-      </header>
-      {renderContent()}
-      <BottomNav
-        activeTab={activeTab}
-        onTab={handleTabChange}
-        onAction={handleReset}
-      />
+    <div className="diag-ia-screen">
+      <div className="diag-ia-header">
+        <button className="fiche-library__back" onClick={onClose}>← Retour</button>
+        <span className="eyebrow">Diagnostic IA Piscine</span>
+      </div>
+      {!selectedFile && <ImageUploader onFileSelected={handleFileSelected} disabled={status === STATUS.UPLOADING || status === STATUS.ANALYZING} />}
+      {selectedFile && status !== STATUS.SUCCESS && (
+        <div className="image-preview">
+          <img src={preview} alt="Apercu" className="image-preview__img" />
+          <button className="image-preview__remove" onClick={handleReset}>Changer</button>
+        </div>
+      )}
+      {status === STATUS.IDLE && selectedFile && (
+        <button className="btn-primary" onClick={handleAnalyze} style={{ width: '100%', marginTop: '1rem' }}>Lancer le diagnostic</button>
+      )}
+      {status === STATUS.UPLOADING && <p className="diag-ia-status">Envoi de la photo...</p>}
+      {status === STATUS.ANALYZING && <p className="diag-ia-status">Analyse en cours...</p>}
+      {status === STATUS.ERROR && <p className="app__error">{error}</p>}
+      {status === STATUS.SUCCESS && result && (
+        <section className="diagnostic-result">
+          <span className="eyebrow" style={{ paddingLeft: '1.5rem', paddingTop: '1.5rem', display: 'block' }}>Resultat</span>
+          <h2 style={{ paddingTop: 0 }}>{result.diagnostic}</h2>
+          {result.valeursLues && Object.values(result.valeursLues).some(v => v) && (
+            <>
+              <h3>Valeurs mesurees</h3>
+              <div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
+                {Object.entries(result.valeursLues).map(([k, v]) => v ? (
+                  <div key={k} className="pool-value-row">
+                    <span className="pool-value-label">{k}</span>
+                    <span className="pool-value-val">{v}</span>
+                  </div>
+                ) : null)}
+              </div>
+            </>
+          )}
+          <h3>Causes probables</h3>
+          <ul>{result.causesProbables?.map((c, i) => <li key={i}>{c}</li>)}</ul>
+          <h3>Actions</h3>
+          <ol>{result.actions?.map((a) => (
+            <li key={a.etape} style={{ marginBottom: '0.75rem' }}>
+              <strong>{a.titre}</strong> — {a.description}
+            </li>
+          ))}</ol>
+          <h3>Planning</h3>
+          <ul>{result.planning?.map((p, i) => <li key={i}><strong>{p.periode}</strong> : {p.tache}</li>)}</ul>
+          <div className="diag-disclaimer">
+            <p>Diagnostic genere par IA a titre indicatif. Ne remplace pas un professionnel.</p>
+          </div>
+          <div style={{ padding: '0 1.5rem 1.5rem' }}>
+            <button className="btn-primary" onClick={handleReset} style={{ width: '100%' }}>Nouveau diagnostic</button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
@@ -287,23 +194,18 @@ function PiscineLibrary({ initialTab }) {
     });
   }, []);
 
-  useEffect(() => {
-    if (initialTab) setActiveCategory(initialTab);
-  }, [initialTab]);
+  useEffect(() => { if (initialTab) setActiveCategory(initialTab); }, [initialTab]);
 
   if (loading) return <p className="app__loading">Chargement...</p>;
 
-  if (selectedFiche) {
-    return (
-      <div className="fiche-library">
-        <button className="fiche-library__back" onClick={() => setSelectedFiche(null)}>← Retour</button>
-        <span className="eyebrow">{POOL_LABELS[selectedFiche.categorie]}</span>
-        <h2>{selectedFiche.titre}</h2>
-        <div className="gold-divider"><span className="gold-divider__mark" /></div>
-        <p className="fiche-library__content">{selectedFiche.contenu}</p>
-      </div>
-    );
-  }
+  if (selectedFiche) return (
+    <div className="fiche-library">
+      <button className="fiche-library__back" onClick={() => setSelectedFiche(null)}>← Retour</button>
+      <span className="eyebrow">{POOL_LABELS[selectedFiche.categorie]}</span>
+      <h2>{selectedFiche.titre}</h2>
+      <p className="fiche-library__content">{selectedFiche.contenu}</p>
+    </div>
+  );
 
   return (
     <div className="fiche-library">
@@ -311,11 +213,7 @@ function PiscineLibrary({ initialTab }) {
       <h2>{POOL_LABELS[activeCategory]}</h2>
       <div className="fiche-library__tabs">
         {POOL_TABS.map((cat) => (
-          <button
-            key={cat}
-            className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`}
-            onClick={() => setActiveCategory(cat)}
-          >
+          <button key={cat} className={`fiche-library__tab ${activeCategory === cat ? 'fiche-library__tab--active' : ''}`} onClick={() => setActiveCategory(cat)}>
             {POOL_LABELS[cat]}
           </button>
         ))}
