@@ -6,6 +6,7 @@ import FicheLibrary from '../library/FicheLibrary';
 import DiagnosticHistory from '../history/DiagnosticHistory';
 import DiagnosticIA from './DiagnosticIA';
 import Paywall from '../billing/Paywall';
+import Drawer from '../common/Drawer';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -18,6 +19,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const [showHistory, setShowHistory] = useState(false);
   const [showDiag, setShowDiag] = useState(false);
   const [libraryTab, setLibraryTab] = useState('maladie');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
 
@@ -34,6 +36,14 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
       <Paywall onSubscribe={startCheckout} loading={subLoading} />
     </main>
   );
+
+  const handleDrawerNav = (dest) => {
+    setDrawerOpen(false);
+    if (dest === 'espaces') { onBackToHub(); return; }
+    if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowHistory(false); setShowDiag(false); setActiveTab('profile'); }
+    if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('fiches'); }
+    if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('agenda'); }
+  };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -90,9 +100,14 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
 
   return (
     <div className="app app-with-nav">
+      {drawerOpen && (
+        <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={handleDrawerNav} onSignOut={signOut} userName={user?.email ?? ''} />
+      )}
       <header className="app__header">
         <BrandLogo size={24} />
-        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)}>
+          <span /><span /><span />
+        </button>
       </header>
       {renderContent()}
       <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} />
