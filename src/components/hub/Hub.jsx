@@ -31,7 +31,7 @@ const SPACES = [
       <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
         <path d="M4 14C6 12 8 10 10 12C12 14 14 12 16 12C18 12 20 14 22 12C24 10 26 12 28 10" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
         <path d="M4 20C6 18 8 16 10 18C12 20 14 18 16 18C18 18 20 20 22 18C24 16 26 18 28 16" stroke="white" strokeWidth="1.6" strokeLinecap="round" opacity="0.7"/>
-        <path d="M4 26C6 24 8 22 10 24C12 26 14 24 16 24C18 24 20 26 22 24C24 22 26 24 28 22" stroke="white" strokeWidth="1.1" strokeLinecap="round" opacity="0.35"/>
+        <path d="M4 26C6 24 8 22 10 24C12 26 14 24 16 24C18 24 20 26 22 24C24 22 26 24 28 22" stroke="white" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
       </svg>
     ),
   },
@@ -40,45 +40,26 @@ const SPACES = [
 export default function Hub({ onSelect, onSignOut, user }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const startX = useRef(null);
-  const diffX = useRef(0);
+  const touchStartX = useRef(null);
 
   const handleNavigate = (dest) => {
     setDrawerOpen(false);
     if (dest === 'gazon') onSelect('gazon');
     if (dest === 'piscine') onSelect('piscine');
-    // Les autres destinations (profil, boutique...) seront gérées depuis les dashboards
   };
 
-  const prev = () => { if (activeIndex > 0) setActiveIndex(i => i - 1); };
-  const next = () => { if (activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1); };
-
-  const wasDragging = useRef(false);
-
-  const handleTouchStart = (e) => { startX.current = e.touches[0].clientX; diffX.current = 0; wasDragging.current = false; };
-  const handleTouchMove = (e) => {
-    if (startX.current !== null) {
-      diffX.current = startX.current - e.touches[0].clientX;
-      if (Math.abs(diffX.current) > 10) wasDragging.current = true;
-    }
-  };
-  const handleTouchEnd = () => {
-    if (diffX.current > 45) next();
-    else if (diffX.current < -45) prev();
-    startX.current = null; diffX.current = 0;
-    setTimeout(() => { wasDragging.current = false; }, 100);
+  // Swipe uniquement sur le wrapper transparent au-dessus
+  const handleSwipeStart = (e) => {
+    touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
   };
 
-  const handleMouseDown = (e) => { startX.current = e.clientX; diffX.current = 0; wasDragging.current = false; };
-  const handleMouseMove = (e) => {
-    if (startX.current === null) return;
-    diffX.current = startX.current - e.clientX;
-    if (Math.abs(diffX.current) > 10) wasDragging.current = true;
-  };
-  const handleMouseUp = () => {
-    if (diffX.current > 45) next();
-    else if (diffX.current < -45) prev();
-    startX.current = null; diffX.current = 0;
+  const handleSwipeEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const diff = touchStartX.current - endX;
+    if (diff > 60 && activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1);
+    if (diff < -60 && activeIndex > 0) setActiveIndex(i => i - 1);
+    touchStartX.current = null;
   };
 
   return (
@@ -111,56 +92,50 @@ export default function Hub({ onSelect, onSignOut, user }) {
       <section className="hub__section">
         <p className="hub__section-label">Choisissez votre espace</p>
 
-        {/* Carousel avec peek */}
-        <div
-          className="hub__peek-wrap"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
+        {/* Container avec overflow hidden pour l'effet peek */}
+        <div className="hub__cards-viewport">
+          {/* Track qui se déplace */}
           <div
-            className="hub__peek-track"
-            style={{ transform: `translateX(calc(-${activeIndex * 80}% - ${activeIndex * 0.75}rem))` }}
+            className="hub__cards-track"
+            style={{ transform: `translateX(calc(-${activeIndex * 85}% - ${activeIndex * 0.75}rem))` }}
           >
-            {SPACES.map((space, i) => {
-              const isActive = i === activeIndex;
-              return (
-                <div
-                  key={space.id}
-                  className={`hub__peek-item ${isActive ? 'hub__peek-item--active' : ''}`}
-                  style={{ opacity: isActive ? 1 : 0.6 }}
+            {SPACES.map((space, i) => (
+              <div key={space.id} className="hub__card-slot">
+                {/* Bouton cliquable SANS logique de drag */}
+                <button
+                  className="hub__card-v2"
+                  style={{
+                    background: space.gradient,
+                    opacity: i === activeIndex ? 1 : 0.6,
+                  }}
+                  onClick={() => i === activeIndex ? onSelect(space.id) : setActiveIndex(i)}
                 >
-                  <button
-                    className="hub__card-v2"
-                    style={{ background: space.gradient }}
-                    onClick={() => { if (!wasDragging.current) { isActive ? onSelect(space.id) : setActiveIndex(i); } }}
-                    draggable={false}
-                  >
-                    <div className="hub__card-glow" style={{ background: space.accentColor }} />
-                    <div className="hub__card-v2-badge">IA</div>
-                    <div className="hub__card-v2-icon">{space.icon}</div>
-                    <div className="hub__card-v2-body">
-                      <span className="hub__card-v2-label">{space.label}</span>
-                      <span className="hub__card-v2-title">{space.title}</span>
-                      <span className="hub__card-v2-sub">{space.sub}</span>
-                      <p className="hub__card-v2-desc">{space.desc}</p>
-                    </div>
-                    <div className="hub__card-v2-footer">
-                      <span className="hub__card-v2-cta">Accéder à l'espace</span>
-                      <span className="hub__card-v2-arrow">→</span>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
+                  <div className="hub__card-glow" style={{ background: space.accentColor }} />
+                  <div className="hub__card-v2-badge">IA</div>
+                  <div className="hub__card-v2-icon">{space.icon}</div>
+                  <div className="hub__card-v2-body">
+                    <span className="hub__card-v2-label">{space.label}</span>
+                    <span className="hub__card-v2-title">{space.title}</span>
+                    <span className="hub__card-v2-sub">{space.sub}</span>
+                    <p className="hub__card-v2-desc">{space.desc}</p>
+                  </div>
+                  <div className="hub__card-v2-footer">
+                    <span className="hub__card-v2-cta">Accéder à l'espace</span>
+                    <span className="hub__card-v2-arrow">→</span>
+                  </div>
+                </button>
+              </div>
+            ))}
           </div>
+
+          {/* Couche transparente pour capturer le swipe SEULEMENT */}
+          <div
+            className="hub__swipe-layer"
+            onTouchStart={handleSwipeStart}
+            onTouchEnd={handleSwipeEnd}
+          />
         </div>
 
-        {/* Dots */}
         <div className="hub__dots">
           {SPACES.map((_, i) => (
             <button
