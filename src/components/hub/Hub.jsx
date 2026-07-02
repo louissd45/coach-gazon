@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import BrandLogo from '../common/BrandLogo';
+import Drawer from '../common/Drawer';
 
 const SPACES = [
   {
@@ -36,11 +37,18 @@ const SPACES = [
   },
 ];
 
-export default function Hub({ onSelect, onSignOut }) {
+export default function Hub({ onSelect, onSignOut, user }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const startX = useRef(null);
   const diffX = useRef(0);
+
+  const handleNavigate = (dest) => {
+    setDrawerOpen(false);
+    if (dest === 'espaces') return;
+    if (dest === 'profil') onSelect('profil');
+  };
 
   const prev = () => { if (activeIndex > 0) setActiveIndex(i => i - 1); };
   const next = () => { if (activeIndex < SPACES.length - 1) setActiveIndex(i => i + 1); };
@@ -68,9 +76,19 @@ export default function Hub({ onSelect, onSignOut }) {
 
   return (
     <div className="hub">
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onNavigate={handleNavigate}
+        onSignOut={onSignOut}
+        userName={user?.email ?? ''}
+      />
+
       <header className="hub__header">
         <BrandLogo size={26} />
-        <button onClick={onSignOut} className="hub__signout">Déconnexion</button>
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)} aria-label="Menu">
+          <span /><span /><span />
+        </button>
       </header>
 
       <section className="hub__hero">

@@ -30,5 +30,5 @@ export default function App() {
     return <DashboardPiscine user={user} signOut={signOut} onBackToHub={() => setSpace(null)} />;
   }
 
-  return <Hub onSelect={setSpace} onSignOut={signOut} />;
+  return <Hub onSelect={setSpace} onSignOut={signOut} user={user} />;
 }

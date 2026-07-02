@@ -6,6 +6,7 @@ import FicheLibrary from '../library/FicheLibrary';
 import DiagnosticHistory from '../history/DiagnosticHistory';
 import DiagnosticIA from './DiagnosticIA';
 import Paywall from '../billing/Paywall';
+import Drawer from '../common/Drawer';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -40,7 +41,15 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     );
   }
 
-  const handleTabChange = (tab) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerNav = (dest) => {
+    setDrawerOpen(false);
+    if (dest === 'espaces') onBackToHub();
+    if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowHistory(false); setShowDiag(false); }
+    if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowDiag(false); setShowProfile(false); setActiveTab('fiches'); }
+    if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowDiag(false); setShowProfile(false); setActiveTab('agenda'); }
+  };
     setActiveTab(tab);
     setShowDiag(false);
     if (tab === 'home') { setShowLibrary(false); setShowProfile(false); setShowHistory(false); }
@@ -122,9 +131,12 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
 
   return (
     <div className="app app-with-nav">
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={handleDrawerNav} onSignOut={signOut} userName={user?.email ?? ''} />
       <header className="app__header">
         <BrandLogo size={24} />
-        <button className="app__nav-back" onClick={onBackToHub}>← Espaces</button>
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)} aria-label="Menu">
+          <span /><span /><span />
+        </button>
       </header>
       {renderContent()}
       <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} />
