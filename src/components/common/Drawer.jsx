@@ -1,19 +1,52 @@
+import { useEffect } from 'react';
+
 export default function Drawer({ open, onClose, onNavigate, onSignOut, userName }) {
+  // Empêche le scroll du body quand le drawer est ouvert
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <>
-      {/* Overlay sombre derrière */}
+      {/* Overlay */}
       <div
-        className={`drawer-overlay ${open ? 'drawer-overlay--visible' : ''}`}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: open ? 'rgba(0,0,0,0.45)' : 'transparent',
+          zIndex: 9998,
+          pointerEvents: open ? 'auto' : 'none',
+          transition: 'background 0.3s ease',
+        }}
         onClick={onClose}
       />
 
-      {/* Panneau latéral */}
-      <div className={`drawer ${open ? 'drawer--open' : ''}`}>
-        {/* En-tête du drawer */}
+      {/* Panneau */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: '78vw',
+          maxWidth: '300px',
+          background: 'var(--bg)',
+          zIndex: 9999,
+          transform: open ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
+          borderRadius: '0 28px 28px 0',
+          overflowY: 'auto',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        {/* Header */}
         <div className="drawer__header">
-          <div className="drawer__avatar">
-            <span>🌿</span>
-          </div>
+          <div className="drawer__avatar">🌿</div>
           <div className="drawer__user">
             <p className="drawer__user-name">Mon compte</p>
             <p className="drawer__user-email">{userName}</p>
@@ -25,41 +58,24 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
 
         {/* Navigation */}
         <nav className="drawer__nav">
-          <button className="drawer__item" onClick={() => onNavigate('espaces')}>
-            <span className="drawer__item-icon">🏠</span>
-            <span>Mes espaces</span>
-          </button>
-
-          <button className="drawer__item" onClick={() => onNavigate('profil')}>
-            <span className="drawer__item-icon">👤</span>
-            <span>Mon profil</span>
-          </button>
-
-          <button className="drawer__item" onClick={() => onNavigate('boutique')}>
-            <span className="drawer__item-icon">🛒</span>
-            <span>Boutique</span>
-            <span className="drawer__item-badge">Bientôt</span>
-          </button>
-
-          <button className="drawer__item" onClick={() => onNavigate('fiches')}>
-            <span className="drawer__item-icon">📋</span>
-            <span>Fiches & Conseils</span>
-          </button>
-
-          <button className="drawer__item" onClick={() => onNavigate('agenda')}>
-            <span className="drawer__item-icon">📅</span>
-            <span>Agenda mensuel</span>
-          </button>
-
-          <button className="drawer__item" onClick={() => onNavigate('notifications')}>
-            <span className="drawer__item-icon">🔔</span>
-            <span>Notifications</span>
-          </button>
+          {[
+            { dest: 'espaces', icon: '🏠', label: 'Mes espaces' },
+            { dest: 'profil', icon: '👤', label: 'Mon profil' },
+            { dest: 'boutique', icon: '🛒', label: 'Boutique', badge: 'Bientôt' },
+            { dest: 'fiches', icon: '📋', label: 'Fiches & Conseils' },
+            { dest: 'agenda', icon: '📅', label: 'Agenda mensuel' },
+            { dest: 'notifications', icon: '🔔', label: 'Notifications' },
+          ].map((item) => (
+            <button key={item.dest} className="drawer__item" onClick={() => onNavigate(item.dest)}>
+              <span className="drawer__item-icon">{item.icon}</span>
+              <span>{item.label}</span>
+              {item.badge && <span className="drawer__item-badge">{item.badge}</span>}
+            </button>
+          ))}
         </nav>
 
         <div className="drawer__divider" />
 
-        {/* Pied du drawer */}
         <div className="drawer__footer">
           <button className="drawer__item drawer__item--danger" onClick={onSignOut}>
             <span className="drawer__item-icon">🚪</span>
