@@ -1,12 +1,33 @@
+import { useState } from 'react';
 import BrandLogo from '../common/BrandLogo';
+import Drawer from '../common/Drawer';
 
 export default function Hub({ onSelect, onSignOut, user }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
     <div className="hub">
+      {drawerOpen && (
+        <Drawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          onNavigate={(dest) => {
+            setDrawerOpen(false);
+            if (dest === 'gazon') onSelect('gazon');
+            if (dest === 'piscine') onSelect('piscine');
+          }}
+          onSignOut={onSignOut}
+          userName={user?.email ?? ''}
+        />
+      )}
+
       <header className="hub__header">
         <BrandLogo size={26} />
-        <button onClick={onSignOut} className="hub__signout">Deconnexion</button>
+        <button className="hub__hamburger" onClick={() => setDrawerOpen(true)}>
+          <span /><span /><span />
+        </button>
       </header>
+
       <section className="hub__hero">
         <div className="hub__hero-top">
           <div className="hub__hero-brand-sky"><BrandLogo size={36} white /></div>
@@ -15,6 +36,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
           <h1 className="hub__title">Votre IA pour une piscine et un gazon parfaits.</h1>
         </div>
       </section>
+
       <section className="hub__section">
         <p className="hub__section-label">Choisissez votre espace</p>
         <div className="hub__cards">
