@@ -28,7 +28,13 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
 
   const legalItems = [
     { dest: 'cgv', icon: '📄', label: 'CGV' },
-    { dest: 'mentions', icon: '⚖️', label: 'Mentions légales & RGPD' },
+    { dest: 'mentions', icon: '⚖️', label: 'Mentions legales & RGPD' },
+  ];
+
+  const plans = [
+    { id: 'gazon', icon: '🌿', name: 'Expert Gazon', monthly: '4,99€', yearly: '49€', color: '#1b4332', bg: '#e8f5e9' },
+    { id: 'piscine', icon: '💧', name: 'Expert Piscine', monthly: '3,99€', yearly: '39€', color: '#1a5276', bg: '#e3f2fd' },
+    { id: 'both', icon: '⭐', name: 'Gazon + Piscine', monthly: '7,99€', yearly: '79€', color: '#1a1a1a', bg: '#f5f5f3', badge: 'Meilleur' },
   ];
 
   return (
@@ -36,7 +42,7 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
       <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
       <div style={{
         position: 'relative', zIndex: 9999,
-        width: '78vw', maxWidth: '300px',
+        width: '82vw', maxWidth: '320px',
         background: '#fff',
         display: 'flex', flexDirection: 'column',
         boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
@@ -72,9 +78,43 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
 
         <div style={{ height: 1, background: '#eee', margin: '0 1.25rem' }} />
 
-        {/* Section légale */}
+        {/* Abonnements */}
+        <div style={{ padding: '0.75rem 1.25rem' }}>
+          <p style={{ fontSize: '0.65rem', fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Abonnements</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {plans.map(plan => (
+              <button
+                key={plan.id}
+                onClick={() => onNavigate('abonnement')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.75rem',
+                  background: plan.bg, border: `1px solid ${plan.color}22`,
+                  borderRadius: 12, padding: '0.65rem 0.85rem',
+                  cursor: 'pointer', textAlign: 'left',
+                  fontFamily: 'var(--font-body)', width: '100%',
+                  position: 'relative',
+                }}>
+                {plan.badge && (
+                  <span style={{ position: 'absolute', top: -8, right: 10, background: plan.color, color: '#fff', fontSize: '0.58rem', fontWeight: 800, borderRadius: 980, padding: '2px 8px' }}>
+                    {plan.badge}
+                  </span>
+                )}
+                <span style={{ fontSize: '1.1rem', width: 24, textAlign: 'center' }}>{plan.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.82rem', color: plan.color }}>{plan.name}</p>
+                  <p style={{ margin: 0, fontSize: '0.7rem', color: plan.color, opacity: 0.7 }}>{plan.monthly}/mois · {plan.yearly}/an</p>
+                </div>
+                <span style={{ fontSize: '0.75rem', color: plan.color, opacity: 0.6 }}>→</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ height: 1, background: '#eee', margin: '0 1.25rem' }} />
+
+        {/* Légal */}
         <div style={{ padding: '0.25rem 0.75rem' }}>
-          <p style={{ fontSize: '0.65rem', fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 0.75rem 0.2rem' }}>Documents légaux</p>
+          <p style={{ fontSize: '0.65rem', fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 0.75rem 0.2rem' }}>Documents legaux</p>
           {legalItems.map(item => (
             <button key={item.dest} onClick={() => onNavigate(item.dest)} style={{ ...btnStyle, fontSize: '0.82rem', color: '#555', padding: '0.6rem 0.75rem' }}>
               <span style={{ fontSize: '1rem', width: 28, textAlign: 'center' }}>{item.icon}</span>
