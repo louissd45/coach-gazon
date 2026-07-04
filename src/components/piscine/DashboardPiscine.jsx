@@ -5,6 +5,7 @@ import ProfilePiscine from './ProfilePiscine';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
+import ProfileUnifie from '../auth/ProfileUnifie';
 import { fetchAllFiches } from '../../services/fichesService';
 import { supabase } from '../../services/supabaseClient';
 import { STATUS } from '../../lib/constants';
@@ -20,19 +21,20 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const [showDiag, setShowDiag] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
+  const [showProfilUnifie, setShowProfilUnifie] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
 
   const resetAll = () => {
     setShowLibrary(false); setShowProfile(false);
-    setShowDiag(false); setShowBoutique(false); setLegalPage(null);
+    setShowDiag(false); setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false);
   };
 
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
     resetAll();
     if (dest === 'espaces') { onBackToHub(); return; }
-    if (dest === 'profil') { setShowProfile(true); }
+    if (dest === 'profil') { setShowProfilUnifie(true); }
     if (dest === 'boutique') setShowBoutique(true);
     if (dest === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }
@@ -55,6 +57,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
+    if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" userId={user.id} />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;

@@ -9,6 +9,7 @@ import Paywall from '../billing/Paywall';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
+import ProfileUnifie from '../auth/ProfileUnifie';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -24,6 +25,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
+  const [showProfilUnifie, setShowProfilUnifie] = useState(false);
 
   if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
 
@@ -44,14 +46,14 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const resetAll = () => {
     setShowLibrary(false); setShowProfile(false);
     setShowHistory(false); setShowDiag(false);
-    setShowBoutique(false); setLegalPage(null);
+    setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false);
   };
 
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
     resetAll();
     if (dest === 'espaces') { onBackToHub(); return; }
-    if (dest === 'profil') { setShowProfile(true); setActiveTab('profile'); }
+    if (dest === 'profil') { setShowProfilUnifie(true); setActiveTab('profile'); }
     if (dest === 'boutique') setShowBoutique(true);
     if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setActiveTab('agenda'); }
@@ -74,6 +76,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
+    if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} userId={user.id} />;
     if (showDiag) return <DiagnosticIA user={user} onClose={() => setShowDiag(false)} />;
