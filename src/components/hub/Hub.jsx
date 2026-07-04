@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import BrandLogo from '../common/BrandLogo';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
+import LegalPages from '../legal/LegalPages';
 
 const SPACES = [
   { id: 'gazon', title: 'Gazon', sub: 'Analyse et Soins', color: 'linear-gradient(145deg,#1b4332,#2d6a4f)' },
@@ -12,14 +13,27 @@ export default function Hub({ onSelect, onSignOut, user }) {
   const [active, setActive] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
+  const [legalPage, setLegalPage] = useState(null);
   const t0 = useRef(null);
 
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
-    if (dest === 'gazon') onSelect('gazon');
-    if (dest === 'piscine') onSelect('piscine');
-    if (dest === 'boutique') setShowBoutique(true);
+    if (dest === 'gazon') { onSelect('gazon'); return; }
+    if (dest === 'piscine') { onSelect('piscine'); return; }
+    if (dest === 'boutique') { setShowBoutique(true); setLegalPage(null); return; }
+    if (dest === 'cgv') { setLegalPage('cgv'); setShowBoutique(false); return; }
+    if (dest === 'mentions') { setLegalPage('mentions'); setShowBoutique(false); return; }
   };
+
+  if (legalPage) return (
+    <div className="app">
+      <header className="app__header">
+        <BrandLogo size={26} />
+        <button className="app__nav-back" onClick={() => setLegalPage(null)}>← Accueil</button>
+      </header>
+      <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />
+    </div>
+  );
 
   if (showBoutique) return (
     <div className="app">
@@ -34,13 +48,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
   return (
     <div className="hub">
       {drawerOpen && (
-        <Drawer
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          onNavigate={handleDrawerNav}
-          onSignOut={onSignOut}
-          userName={user?.email ?? ''}
-        />
+        <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={handleDrawerNav} onSignOut={onSignOut} userName={user?.email ?? ''} />
       )}
 
       <header className="hub__header">
@@ -63,8 +71,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
       <section className="hub__section">
         <p className="hub__section-label">Choisissez votre espace</p>
 
-        <div
-          style={{ overflow: 'hidden', borderRadius: '24px' }}
+        <div style={{ overflow: 'hidden', borderRadius: '24px' }}
           onTouchStart={e => { t0.current = e.touches[0].clientX; }}
           onTouchEnd={e => {
             if (!t0.current) return;
@@ -72,8 +79,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
             if (diff > 50 && active < 1) setActive(1);
             if (diff < -50 && active > 0) setActive(0);
             t0.current = null;
-          }}
-        >
+          }}>
           <div style={{
             display: 'flex', gap: '0.75rem',
             transform: `translateX(calc(-${active * 85}% - ${active * 0.75}rem))`,
@@ -84,11 +90,10 @@ export default function Hub({ onSelect, onSignOut, user }) {
               <button key={s.id}
                 onClick={() => i === active ? onSelect(s.id) : setActive(i)}
                 style={{
-                  flex: '0 0 85%', height: '280px',
-                  background: s.color, border: 'none', borderRadius: '24px',
-                  padding: '1.75rem', display: 'flex', flexDirection: 'column',
-                  justifyContent: 'space-between', alignItems: 'flex-start',
-                  cursor: 'pointer', textAlign: 'left',
+                  flex: '0 0 85%', height: '280px', background: s.color,
+                  border: 'none', borderRadius: '24px', padding: '1.75rem',
+                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                  alignItems: 'flex-start', cursor: 'pointer', textAlign: 'left',
                   opacity: i === active ? 1 : 0.6, transition: 'opacity 0.3s',
                   boxShadow: '0 10px 36px rgba(0,0,0,0.2)', position: 'relative',
                 }}>
@@ -98,7 +103,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
                   <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.75)', marginTop: '0.2rem' }}>{s.sub}</div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>Acceder a espace</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>Acceder a l'espace</span>
                   <span style={{ color: 'white' }}>→</span>
                 </div>
                 <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '0.65rem', fontWeight: 700, borderRadius: '8px', padding: '0.2rem 0.55rem' }}>IA</div>
@@ -110,23 +115,20 @@ export default function Hub({ onSelect, onSignOut, user }) {
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>
           {SPACES.map((_, i) => (
             <button key={i} onClick={() => setActive(i)} style={{
-              width: i === active ? '20px' : '8px', height: '8px',
-              borderRadius: '4px',
+              width: i === active ? '20px' : '8px', height: '8px', borderRadius: '4px',
               background: i === active ? 'var(--accent)' : 'var(--border)',
               border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.3s',
             }} />
           ))}
         </div>
 
-        <button
-          onClick={() => setShowBoutique(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '0.85rem',
-            width: '100%', marginTop: '1.25rem',
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: '16px', padding: '1rem 1.1rem',
-            cursor: 'pointer', textAlign: 'left', fontFamily: 'var(--font-body)',
-          }}>
+        <button onClick={() => setShowBoutique(true)} style={{
+          display: 'flex', alignItems: 'center', gap: '0.85rem',
+          width: '100%', marginTop: '1.25rem',
+          background: 'var(--surface)', border: '1px solid var(--border)',
+          borderRadius: '16px', padding: '1rem 1.1rem',
+          cursor: 'pointer', textAlign: 'left', fontFamily: 'var(--font-body)',
+        }}>
           <span style={{ fontSize: '1.3rem', width: 44, height: 44, background: 'var(--bg-soft)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🛒</span>
           <div>
             <p style={{ margin: 0, fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--text)', fontSize: '0.97rem' }}>Boutique</p>

@@ -8,6 +8,7 @@ import DiagnosticIA from './DiagnosticIA';
 import Paywall from '../billing/Paywall';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
+import LegalPages from '../legal/LegalPages';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
 
@@ -22,6 +23,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const [libraryTab, setLibraryTab] = useState('maladie');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
+  const [legalPage, setLegalPage] = useState(null);
 
   if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
 
@@ -39,33 +41,37 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     </main>
   );
 
+  const resetAll = () => {
+    setShowLibrary(false); setShowProfile(false);
+    setShowHistory(false); setShowDiag(false);
+    setShowBoutique(false); setLegalPage(null);
+  };
+
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
+    resetAll();
     if (dest === 'espaces') { onBackToHub(); return; }
-    if (dest === 'boutique') { setShowBoutique(true); setShowLibrary(false); setShowProfile(false); setShowHistory(false); setShowDiag(false); }
-    if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowHistory(false); setShowDiag(false); setActiveTab('profile'); }
-    if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('fiches'); }
-    if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); setShowDiag(false); setActiveTab('agenda'); }
+    if (dest === 'profil') { setShowProfile(true); setActiveTab('profile'); }
+    if (dest === 'boutique') setShowBoutique(true);
+    if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setActiveTab('fiches'); }
+    if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setActiveTab('agenda'); }
+    if (dest === 'cgv') setLegalPage('cgv');
+    if (dest === 'mentions') setLegalPage('mentions');
   };
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setShowDiag(false);
-    if (tab === 'home') { setShowLibrary(false); setShowProfile(false); setShowHistory(false); }
-    if (tab === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); }
-    if (tab === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setShowProfile(false); setShowHistory(false); }
-    if (tab === 'profile') { setShowProfile(true); setShowLibrary(false); setShowHistory(false); }
+    setActiveTab(tab); resetAll();
+    if (tab === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); }
+    if (tab === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); }
+    if (tab === 'profile') setShowProfile(true);
   };
 
   const handleActionButton = () => {
-    setShowDiag(true);
-    setShowLibrary(false);
-    setShowProfile(false);
-    setShowHistory(false);
-    setActiveTab('home');
+    resetAll(); setShowDiag(true); setActiveTab('home');
   };
 
   const renderContent = () => {
+    if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} userId={user.id} />;
     if (showDiag) return <DiagnosticIA user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;

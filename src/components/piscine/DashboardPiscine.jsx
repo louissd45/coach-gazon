@@ -4,6 +4,7 @@ import BottomNav from '../nav/BottomNav';
 import ProfilePiscine from './ProfilePiscine';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
+import LegalPages from '../legal/LegalPages';
 import { fetchAllFiches } from '../../services/fichesService';
 import { supabase } from '../../services/supabaseClient';
 import { STATUS } from '../../lib/constants';
@@ -18,37 +19,40 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const [showProfile, setShowProfile] = useState(false);
   const [showDiag, setShowDiag] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
+  const [legalPage, setLegalPage] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
 
+  const resetAll = () => {
+    setShowLibrary(false); setShowProfile(false);
+    setShowDiag(false); setShowBoutique(false); setLegalPage(null);
+  };
+
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
+    resetAll();
     if (dest === 'espaces') { onBackToHub(); return; }
-    if (dest === 'profil') { setShowProfile(true); setShowLibrary(false); setShowDiag(false); setShowBoutique(false); }
-    if (dest === 'boutique') { setShowBoutique(true); setShowLibrary(false); setShowProfile(false); setShowDiag(false); }
-    if (dest === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setShowProfile(false); setShowDiag(false); setShowBoutique(false); setActiveTab('fiches'); }
-    if (dest === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setShowProfile(false); setShowDiag(false); setShowBoutique(false); setActiveTab('agenda'); }
+    if (dest === 'profil') { setShowProfile(true); }
+    if (dest === 'boutique') setShowBoutique(true);
+    if (dest === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }
+    if (dest === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }
+    if (dest === 'cgv') setLegalPage('cgv');
+    if (dest === 'mentions') setLegalPage('mentions');
   };
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setShowDiag(false);
-    setShowBoutique(false);
-    if (tab === 'home') { setShowLibrary(false); setShowProfile(false); }
-    if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setShowProfile(false); }
-    if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setShowProfile(false); }
-    if (tab === 'profile') { setShowProfile(true); setShowLibrary(false); }
+    setActiveTab(tab); resetAll();
+    if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); }
+    if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); }
+    if (tab === 'profile') setShowProfile(true);
   };
 
   const handleActionButton = () => {
-    setShowDiag(true);
-    setShowLibrary(false);
-    setShowProfile(false);
-    setShowBoutique(false);
-    setActiveTab('home');
+    resetAll(); setShowDiag(true); setActiveTab('home');
   };
 
   const renderContent = () => {
+    if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" userId={user.id} />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
@@ -66,7 +70,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
           </button>
           <button className="dashboard-action" onClick={() => { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }}>
             <span className="dashboard-action__icon">💧</span>
-            <div><p className="dashboard-action__label">Analyse de eau</p><p className="dashboard-action__desc">pH, chlore, TAC, TH, stabilisant</p></div>
+            <div><p className="dashboard-action__label">Analyse de l'eau</p><p className="dashboard-action__desc">pH, chlore, TAC, TH, stabilisant</p></div>
             <span className="dashboard-action__arrow">→</span>
           </button>
           <button className="dashboard-action" onClick={() => { setLibraryTab('probleme_eau'); setShowLibrary(true); setActiveTab('fiches'); }}>
@@ -74,7 +78,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
             <div><p className="dashboard-action__label">Problemes eau</p><p className="dashboard-action__desc">Eau verte, trouble, mousseuse</p></div>
             <span className="dashboard-action__arrow">→</span>
           </button>
-          <button className="dashboard-action" onClick={() => { setShowBoutique(true); }}>
+          <button className="dashboard-action" onClick={() => setShowBoutique(true)}>
             <span className="dashboard-action__icon">🛒</span>
             <div><p className="dashboard-action__label">Boutique piscine</p><p className="dashboard-action__desc">Chlore, pH, algicide, bandelettes</p></div>
             <span className="dashboard-action__arrow">→</span>

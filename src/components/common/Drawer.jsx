@@ -26,6 +26,11 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
     { dest: 'notifications', icon: '🔔', label: 'Notifications' },
   ];
 
+  const legalItems = [
+    { dest: 'cgv', icon: '📄', label: 'CGV' },
+    { dest: 'mentions', icon: '⚖️', label: 'Mentions légales & RGPD' },
+  ];
+
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9998, display: 'flex' }}>
       <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)' }} />
@@ -42,10 +47,11 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
       }}>
         <style>{`@keyframes slideIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}`}</style>
 
+        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1.25rem 1.25rem' }}>
           <div style={{ width: 46, height: 46, background: '#e8f5e9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>🌿</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ margin: 0, fontWeight: 700, color: '#1a1a1a', fontSize: '0.95rem' }}>Mon compte</p>
+            <p style={{ margin: 0, fontWeight: 700, color: '#1a1a1a', fontSize: '0.95rem' }}>Mon Expert Jardin</p>
             <p style={{ margin: 0, fontSize: '0.75rem', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userName}</p>
           </div>
           <button onClick={onClose} style={{ background: '#f5f5f5', border: 'none', width: 32, height: 32, borderRadius: '50%', cursor: 'pointer', fontSize: '0.85rem', color: '#666' }}>✕</button>
@@ -53,7 +59,8 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
 
         <div style={{ height: 1, background: '#eee', margin: '0 1.25rem' }} />
 
-        <nav style={{ display: 'flex', flexDirection: 'column', padding: '0.5rem 0.75rem', flex: 1 }}>
+        {/* Nav principale */}
+        <nav style={{ display: 'flex', flexDirection: 'column', padding: '0.5rem 0.75rem' }}>
           {items.map(item => (
             <button key={item.dest} onClick={() => onNavigate(item.dest)} style={btnStyle}>
               <span style={{ fontSize: '1.15rem', width: 28, textAlign: 'center' }}>{item.icon}</span>
@@ -65,6 +72,20 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
 
         <div style={{ height: 1, background: '#eee', margin: '0 1.25rem' }} />
 
+        {/* Section légale */}
+        <div style={{ padding: '0.25rem 0.75rem' }}>
+          <p style={{ fontSize: '0.65rem', fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 0.75rem 0.2rem' }}>Documents légaux</p>
+          {legalItems.map(item => (
+            <button key={item.dest} onClick={() => onNavigate(item.dest)} style={{ ...btnStyle, fontSize: '0.82rem', color: '#555', padding: '0.6rem 0.75rem' }}>
+              <span style={{ fontSize: '1rem', width: 28, textAlign: 'center' }}>{item.icon}</span>
+              <span style={{ flex: 1 }}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div style={{ height: 1, background: '#eee', margin: '0 1.25rem' }} />
+
+        {/* Footer */}
         <div style={{ padding: '0.5rem 0.75rem 1.5rem' }}>
           <button onClick={onSignOut} style={{ ...btnStyle, color: '#c0392b' }}>
             <span style={{ fontSize: '1.15rem', width: 28, textAlign: 'center' }}>🚪</span>
