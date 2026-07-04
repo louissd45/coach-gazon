@@ -24,6 +24,8 @@ export default function ProfileUnifie({ userId, onClose }) {
   const [typeTraitement, setTypeTraitement] = useState('chlore');
   const [typeBassin, setTypeBassin] = useState('enterree');
   const [typeFiltre, setTypeFiltre] = useState('sable');
+  const [formeBassin, setFormeBassin] = useState('rectangulaire');
+  const [diametre, setDiametre] = useState('');
   const [robot, setRobot] = useState(false);
   const [chauffage, setChauffage] = useState('aucun');
 
@@ -54,11 +56,18 @@ export default function ProfileUnifie({ userId, onClose }) {
   }, [userId]);
 
   useEffect(() => {
-    if (longueur && largeur && profondeur) {
+    if (formeBassin === 'rectangulaire' && longueur && largeur && profondeur) {
       const vol = Math.round(parseFloat(longueur) * parseFloat(largeur) * parseFloat(profondeur) * 1000);
       if (!isNaN(vol)) setVolumeM3(vol);
+    } else if (formeBassin === 'ronde' && diametre && profondeur) {
+      const r = parseFloat(diametre) / 2;
+      const vol = Math.round(Math.PI * r * r * parseFloat(profondeur) * 1000);
+      if (!isNaN(vol)) setVolumeM3(vol);
+    } else if (formeBassin === 'ovale' && longueur && largeur && profondeur) {
+      const vol = Math.round(Math.PI * (parseFloat(longueur)/2) * (parseFloat(largeur)/2) * parseFloat(profondeur) * 1000);
+      if (!isNaN(vol)) setVolumeM3(vol);
     }
-  }, [longueur, largeur, profondeur]);
+  }, [longueur, largeur, profondeur, diametre, formeBassin]);
 
   const handleSave = async () => {
     setSaving(true); setError(null); setSaved(false);
@@ -83,6 +92,8 @@ export default function ProfileUnifie({ userId, onClose }) {
         piscine_type_bassin: typeBassin,
         piscine_type_filtre: typeFiltre,
         piscine_robot: robot,
+        piscine_forme: formeBassin,
+        piscine_diametre_m: diametre ? parseFloat(diametre) : null,
         piscine_chauffage: chauffage,
       }, { onConflict: 'user_id' });
       if (upsertError) throw upsertError;
@@ -202,21 +213,52 @@ export default function ProfileUnifie({ userId, onClose }) {
               <option value="spa">Spa / Jacuzzi</option>
             </select>
           </div>
-          <label style={{ ...labelStyle, marginBottom: '0.75rem' }}>Dimensions (en mètres)</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: '1rem' }}>
-            <div>
-              <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Longueur</label>
-              <input style={inputStyle} type="number" step="0.1" placeholder="10" value={longueur} onChange={e => setLongueur(e.target.value)} />
-            </div>
-            <div>
-              <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Largeur</label>
-              <input style={inputStyle} type="number" step="0.1" placeholder="4" value={largeur} onChange={e => setLargeur(e.target.value)} />
-            </div>
-            <div>
-              <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Profondeur</label>
-              <input style={inputStyle} type="number" step="0.1" placeholder="1.5" value={profondeur} onChange={e => setProfondeur(e.target.value)} />
+
+          <div style={fieldStyle}>
+            <label style={labelStyle}>Forme de la piscine</label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[
+                { id: 'rectangulaire', icon: '▬', label: 'Rectangulaire' },
+                { id: 'ronde', icon: '⬤', label: 'Ronde' },
+                { id: 'ovale', icon: '⬯', label: 'Ovale' },
+              ].map(f => (
+                <button key={f.id} onClick={() => setFormeBassin(f.id)} type="button"
+                  style={{ flex: 1, padding: '10px 6px', borderRadius: 12, border: formeBassin === f.id ? '2px solid #1a5276' : '1.5px solid var(--border)', background: formeBassin === f.id ? '#e3f2fd' : 'var(--bg-soft)', color: formeBassin === f.id ? '#1a5276' : 'var(--text-dim)', fontFamily: 'var(--font-body)', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.1rem', marginBottom: 3 }}>{f.icon}</div>
+                  {f.label}
+                </button>
+              ))}
             </div>
           </div>
+
+          <label style={{ ...labelStyle, marginBottom: '0.75rem' }}>Dimensions (en mètres)</label>
+          {formeBassin === 'ronde' ? (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: '1rem' }}>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Diamètre</label>
+                <input style={inputStyle} type="number" step="0.1" placeholder="5" value={diametre} onChange={e => setDiametre(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Profondeur</label>
+                <input style={inputStyle} type="number" step="0.1" placeholder="1.5" value={profondeur} onChange={e => setProfondeur(e.target.value)} />
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: '1rem' }}>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '0.7rem' }}>{formeBassin === 'ovale' ? 'Grand axe' : 'Longueur'}</label>
+                <input style={inputStyle} type="number" step="0.1" placeholder="10" value={longueur} onChange={e => setLongueur(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '0.7rem' }}>{formeBassin === 'ovale' ? 'Petit axe' : 'Largeur'}</label>
+                <input style={inputStyle} type="number" step="0.1" placeholder="4" value={largeur} onChange={e => setLargeur(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '0.7rem' }}>Profondeur</label>
+                <input style={inputStyle} type="number" step="0.1" placeholder="1.5" value={profondeur} onChange={e => setProfondeur(e.target.value)} />
+              </div>
+            </div>
+          )}
           <div style={fieldStyle}>
             <label style={labelStyle}>Volume (litres) — calculé automatiquement</label>
             <input style={{ ...inputStyle, background: volumeM3 ? '#e3f2fd' : 'var(--bg-soft)', fontWeight: volumeM3 ? 700 : 400, color: volumeM3 ? '#1a5276' : 'var(--text-dim)' }} type="number" placeholder="60000" value={volumeM3} onChange={e => setVolumeM3(e.target.value)} />
