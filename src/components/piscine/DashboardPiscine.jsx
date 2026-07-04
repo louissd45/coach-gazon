@@ -36,6 +36,9 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
     if (dest === 'boutique') setShowBoutique(true);
     if (dest === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }
+    if (dest === 'agenda-piscine') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }
+    if (dest === 'fiches-piscine') { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }
+    if (dest === 'fiches') { onBackToHub(); return; }
     if (dest === 'cgv') setLegalPage('cgv');
     if (dest === 'mentions') setLegalPage('mentions');
   };

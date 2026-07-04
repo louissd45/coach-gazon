@@ -55,6 +55,9 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     if (dest === 'boutique') setShowBoutique(true);
     if (dest === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); setActiveTab('fiches'); }
     if (dest === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); setActiveTab('agenda'); }
+    if (dest === 'fiches-piscine') { onBackToHub(); return; }
+    if (dest === 'agenda-piscine') { onBackToHub(); return; }
+    if (dest === 'abonnement') { resetAll(); setShowProfile(false); }
     if (dest === 'cgv') setLegalPage('cgv');
     if (dest === 'mentions') setLegalPage('mentions');
   };
