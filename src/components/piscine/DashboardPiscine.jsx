@@ -100,7 +100,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
         <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onNavigate={handleDrawerNav} onSignOut={signOut} userName={user?.email ?? ''} />
       )}
       <header className="app__header">
-        <BrandLogo size={24} />
+        <button onClick={onBackToHub} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}><BrandLogo size={24} /></button>
         <button className="hub__hamburger" onClick={() => setDrawerOpen(true)}>
           <span /><span /><span />
         </button>

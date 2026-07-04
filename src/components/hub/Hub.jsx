@@ -3,6 +3,7 @@ import BrandLogo from '../common/BrandLogo';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
+import ProfileUnifie from '../auth/ProfileUnifie';
 
 const SPACES = [
   { id: 'gazon', title: 'Gazon', sub: 'Analyse et Soins', color: 'linear-gradient(145deg,#1b4332,#2d6a4f)' },
@@ -14,16 +15,28 @@ export default function Hub({ onSelect, onSignOut, user }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
+  const [showProfilUnifie, setShowProfilUnifie] = useState(false);
   const t0 = useRef(null);
 
   const handleDrawerNav = (dest) => {
     setDrawerOpen(false);
     if (dest === 'gazon') { onSelect('gazon'); return; }
     if (dest === 'piscine') { onSelect('piscine'); return; }
-    if (dest === 'boutique') { setShowBoutique(true); setLegalPage(null); return; }
+    if (dest === 'profil') { setShowProfilUnifie(true); setShowBoutique(false); setLegalPage(null); return; }
+    if (dest === 'boutique') { setShowBoutique(true); setLegalPage(null); setShowProfilUnifie(false); return; }
     if (dest === 'cgv') { setLegalPage('cgv'); setShowBoutique(false); return; }
     if (dest === 'mentions') { setLegalPage('mentions'); setShowBoutique(false); return; }
   };
+
+  if (showProfilUnifie) return (
+    <div className="app">
+      <header className="app__header">
+        <BrandLogo size={26} />
+        <button className="app__nav-back" onClick={() => setShowProfilUnifie(false)}>← Accueil</button>
+      </header>
+      <ProfileUnifie userId={user?.id} onClose={() => setShowProfilUnifie(false)} />
+    </div>
+  );
 
   if (legalPage) return (
     <div className="app">
