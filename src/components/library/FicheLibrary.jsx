@@ -14,9 +14,9 @@ const TABS_FICHES = ['maladie', 'mauvaises_herbes', 'entretien', 'renovation'];
 const TABS_AGENDA = ['agenda'];
 
 const MONTH_ORDER = [
-  'Agenda Janvier', 'Agenda Février', 'Agenda Mars', 'Agenda Avril',
-  'Agenda Mai', 'Agenda Juin', 'Agenda Juillet', 'Agenda Août',
-  'Agenda Septembre', 'Agenda Octobre', 'Agenda Novembre', 'Agenda Décembre',
+  'Janvier', 'Février', 'Mars', 'Avril',
+  'Mai', 'Juin', 'Juillet', 'Août',
+  'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 
 function sortFiches(fiches, categorie) {
