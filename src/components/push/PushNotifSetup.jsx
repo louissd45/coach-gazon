@@ -40,9 +40,10 @@ export default function PushNotifSetup({ userId }) {
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
             });
-            await supabase.from('users_profile').update({
+            await supabase.from('users_profile').upsert({
+              user_id: userId,
               push_subscription: JSON.parse(JSON.stringify(sub)),
-            }).eq('user_id', userId);
+            }, { onConflict: 'user_id' });
             setStatus('subscribed');
           } catch {
             setStatus('idle');
@@ -68,9 +69,10 @@ export default function PushNotifSetup({ userId }) {
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });
 
-      const { error } = await supabase.from('users_profile').update({
+      const { error } = await supabase.from('users_profile').upsert({
+        user_id: userId,
         push_subscription: JSON.parse(JSON.stringify(sub)),
-      }).eq('user_id', userId);
+      }, { onConflict: 'user_id' });
 
       if (error) throw error;
       setStatus('subscribed');
