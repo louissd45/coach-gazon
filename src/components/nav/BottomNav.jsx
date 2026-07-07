@@ -2,7 +2,7 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
   return (
     <nav className="bottom-nav" role="navigation" aria-label="Navigation principale">
       <button
-        className={`bottom-nav__item ${activeTab === 'home' ? 'bottom-nav__item--active' : ''}`}
+        className={`bottom-nav__item ${activeTab === 'home' || activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
         onClick={onBackToHub}
         aria-label="Accueil"
       >
@@ -13,8 +13,8 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
       </button>
 
       <button
-        className={`bottom-nav__item ${activeTab === 'home' || activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('home')}
+        className={`bottom-nav__item ${activeTab === 'menu' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('menu')}
         aria-label="Diagnostic"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -36,15 +36,15 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
       </button>
 
       <button
-        className={`bottom-nav__item ${activeTab === 'agenda' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('agenda')}
-        aria-label="Agenda"
+        className={`bottom-nav__item ${activeTab === 'history' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('history')}
+        aria-label="Historique"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-          <path d="M8 2V6M16 2V6M3 10H21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6"/>
+          <path d="M12 7V12L15 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
-        <span>Agenda</span>
+        <span>Historique</span>
       </button>
 
       <button
@@ -54,8 +54,7 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.6"/>
-          <path d="M4 20C4 17 7.6 15 12 15C16.4 15 20 17 20 20"
-            stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M4 20C4 17 7.6 15 12 15C16.4 15 20 17 20 20" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
         <span>Profil</span>
       </button>
