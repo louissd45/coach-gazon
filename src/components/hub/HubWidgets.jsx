@@ -8,7 +8,7 @@ const CONSEILS_MOIS = {
   4: { emoji: '🌧️', titre: 'Avril', conseil: 'Reprenez les tontes hebdomadaires. Désherbage des mauvaises herbes annuelles avant qu\'elles fleurissent.' },
   5: { emoji: '💪', titre: 'Mai', conseil: 'Pic de croissance. Deuxième engrais équilibré NPK. Ne tondez jamais une pelouse mouillée.' },
   6: { emoji: '☀️', titre: 'Juin', conseil: 'Relevez la tonte à 6-8cm. Arrosez tôt le matin, 15L/m² — jamais le soir.' },
-  7: { emoji: '🔥', titre: 'Juillet', conseil: 'Canicule : laissez jaunir sans panique, c\'est la dormance. Mulching activé pour protéger le sol.' },
+  7: { emoji: '🔥', titre: 'Juillet', conseil: 'Arrosez profondément 2-3x/semaine tôt le matin (15L/m²). Tondez à 7-8cm — plus haut conserve l\'humidité et protège les racines. Mulching activé.' },
   8: { emoji: '⛈️', titre: 'Août', conseil: 'Après l\'été, préparez vos semences et engrais d\'automne. Commandez dès maintenant pour septembre.' },
   9: { emoji: '🍂', titre: 'Septembre', conseil: 'La meilleure période de l\'année ! Scarifiez, aérez, regarnissez. Engrais potasse. Votre gazon vous remerciera.' },
   10: { emoji: '🍁', titre: 'Octobre', conseil: 'Ramassez les feuilles régulièrement — elles étouffent le gazon. Dernier engrais d\'automne.' },
