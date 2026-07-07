@@ -136,6 +136,8 @@ export default function Hub({ onSelect, onSignOut, user }) {
           ))}
         </div>
 
+        <HubWidgets userId={user?.id} user={user} onSelect={onSelect} />
+
         <button onClick={() => setShowBoutique(true)} style={{
           display: 'flex', alignItems: 'center', gap: '0.85rem',
           width: '100%', marginTop: '1.25rem',
