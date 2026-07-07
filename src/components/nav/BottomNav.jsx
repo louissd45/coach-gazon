@@ -1,19 +1,16 @@
-export default function BottomNav({ activeTab, onTab, onAction }) {
+export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
   return (
     <nav className="bottom-nav" role="navigation" aria-label="Navigation principale">
       <button
-        className={`bottom-nav__item ${activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('diagnostic')}
-        aria-label="Diagnostic"
+        className={`bottom-nav__item ${activeTab === 'home' ? 'bottom-nav__item--active' : ''}`}
+        onClick={onBackToHub}
+        aria-label="Accueil"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6"/>
-          <path d="M20 20L16.65 16.65" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-          <path d="M11 8V14M8 11H14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+          <path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <span>Diagnostic</span>
+        <span>Accueil</span>
       </button>
-
       <button
         className={`bottom-nav__item ${activeTab === 'fiches' ? 'bottom-nav__item--active' : ''}`}
         onClick={() => onTab('fiches')}
@@ -27,8 +24,6 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
         </svg>
         <span>Fiches</span>
       </button>
-
-      {/* Bouton central d'action */}
       <button
         className="bottom-nav__action"
         onClick={onAction}
@@ -38,7 +33,6 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
           <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
         </svg>
       </button>
-
       <button
         className={`bottom-nav__item ${activeTab === 'agenda' ? 'bottom-nav__item--active' : ''}`}
         onClick={() => onTab('agenda')}
@@ -50,7 +44,6 @@ export default function BottomNav({ activeTab, onTab, onAction }) {
         </svg>
         <span>Agenda</span>
       </button>
-
       <button
         className={`bottom-nav__item ${activeTab === 'profile' ? 'bottom-nav__item--active' : ''}`}
         onClick={() => onTab('profile')}

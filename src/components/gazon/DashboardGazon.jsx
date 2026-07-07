@@ -128,7 +128,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
         </button>
       </header>
       {renderContent()}
-      <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} />
+      <BottomNav activeTab={activeTab} onTab={handleTabChange} onAction={handleActionButton} onBackToHub={onBackToHub} />
     </div>
   );
 }
