@@ -4,7 +4,7 @@ import { requestDiagnostic } from '../services/diagnosticService';
 import { supabase } from '../services/supabaseClient';
 import { STATUS } from '../lib/constants';
 
-export function useDiagnostic() {
+export function useDiagnostic(type = 'gazon') {
   const { uploadImage } = useImageUpload();
   const [status, setStatus] = useState(STATUS.IDLE);
   const [result, setResult] = useState(null);
@@ -22,13 +22,12 @@ export function useDiagnostic() {
         setStatus(STATUS.ANALYZING);
         const diagnostic = await requestDiagnostic(publicUrl);
 
-        // Persiste le diagnostic pour l'historique + pour le coach SMS
-        // (référence utilisée par daily-check pour les rappels de suivi)
         await supabase.from('diagnostics').insert({
           user_id: userId,
           image_path: '',
           image_url: publicUrl,
           diagnostic,
+          type,
         });
 
         setResult(diagnostic);
@@ -38,7 +37,7 @@ export function useDiagnostic() {
         setStatus(STATUS.ERROR);
       }
     },
-    [uploadImage]
+    [uploadImage, type]
   );
 
   const reset = useCallback(() => {

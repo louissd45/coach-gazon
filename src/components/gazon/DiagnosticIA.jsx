@@ -10,7 +10,7 @@ import { STATUS } from '../../lib/constants';
 
 export default function DiagnosticIA({ user, onClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
-  const { runDiagnostic, reset, status, result, error } = useDiagnostic();
+  const { runDiagnostic, reset, status, result, error } = useDiagnostic('gazon');
   const { count, canDiagnose, remaining, isExhausted, increment, loading: trialLoading } = useFreeTrial(user.id);
   const { status: subStatus, startCheckout, loading: subLoading } = useSubscription(user.id);
   const [products, setProducts] = useState({});

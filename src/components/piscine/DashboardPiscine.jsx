@@ -63,7 +63,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const renderContent = () => {
     if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
-    if (showHistory) return <DiagnosticHistory userId={user.id} />;
+    if (showHistory) return <DiagnosticHistory userId={user.id} type="piscine" />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" userId={user.id} />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
@@ -138,6 +138,7 @@ function DiagnosticPiscine({ user, onClose }) {
       const { data, error: fnError } = await supabase.functions.invoke('analyze-pool', { body: { imageUrl: publicUrl, userId: user.id } });
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
+      await supabase.from('diagnostics').insert({ user_id: user.id, image_path: '', image_url: publicUrl, diagnostic: data, type: 'piscine' });
       setResult(data);
       setStatus(STATUS.SUCCESS);
     } catch (err) {

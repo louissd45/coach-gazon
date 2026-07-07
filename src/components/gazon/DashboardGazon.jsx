@@ -86,7 +86,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     if (showDiag) return <DiagnosticIA user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfileForm userId={user.id} onSaved={() => setShowProfile(false)} />;
     if (showLibrary) return <FicheLibrary initialTab={libraryTab} />;
-    if (showHistory) return <DiagnosticHistory userId={user.id} />;
+    if (showHistory) return <DiagnosticHistory userId={user.id} type="gazon" />;
     return (
       <div className="dashboard-home">
         <span className="eyebrow">Mon Expert Gazon</span>
