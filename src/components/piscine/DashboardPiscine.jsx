@@ -5,6 +5,7 @@ import ProfilePiscine from './ProfilePiscine';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
+import PushNotifSetup from '../push/PushNotifSetup';
 import DiagnosticHistory from '../history/DiagnosticHistory';
 import ProfileUnifie from '../auth/ProfileUnifie';
 import { fetchAllFiches } from '../../services/fichesService';
@@ -23,13 +24,14 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const [showBoutique, setShowBoutique] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showProfilUnifie, setShowProfilUnifie] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [libraryTab, setLibraryTab] = useState('analyse_eau');
 
   const resetAll = () => {
     setShowLibrary(false); setShowProfile(false);
-    setShowDiag(false); setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false); setShowHistory(false);
+    setShowDiag(false); setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false); setShowHistory(false); setShowNotifications(false);
   };
 
   const handleDrawerNav = (dest) => {
@@ -43,6 +45,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
     if (dest === 'agenda-piscine') { setLibraryTab('entretien_piscine'); setShowLibrary(true); setActiveTab('agenda'); }
     if (dest === 'fiches-piscine') { setLibraryTab('analyse_eau'); setShowLibrary(true); setActiveTab('fiches'); }
     if (dest === 'fiches') { onBackToHub(); return; }
+    if (dest === 'notifications') { setShowNotifications(true); }
     if (dest === 'cgv') setLegalPage('cgv');
     if (dest === 'mentions') setLegalPage('mentions');
   };
@@ -61,6 +64,15 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
+    if (showNotifications) return (
+      <div className="fiche-library" style={{ paddingBottom: '6rem' }}>
+        <button className="fiche-library__back" onClick={() => setShowNotifications(false)}>← Retour</button>
+        <span className="eyebrow">Paramètres</span>
+        <h2>Notifications</h2>
+        <PushNotifSetup userId={user.id} />
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.6, marginTop: '1rem' }}>Les notifications vous envoient chaque soir à 20h la météo du lendemain et vos recommandations IA personnalisées.</p>
+      </div>
+    );
     if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showHistory) return <DiagnosticHistory userId={user.id} type="piscine" />;

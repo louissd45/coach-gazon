@@ -6,6 +6,7 @@ import LegalPages from '../legal/LegalPages';
 import ProfileUnifie from '../auth/ProfileUnifie';
 import HubWidgets from './HubWidgets';
 import PushNotifSetup from '../push/PushNotifSetup';
+import { useState as useStateNotif } from 'react';
 
 const SPACES = [
   { id: 'gazon', title: 'Gazon', sub: 'Analyse et Soins', color: 'linear-gradient(145deg,#1b4332,#2d6a4f)' },
@@ -26,6 +27,7 @@ export default function Hub({ onSelect, onSignOut, user }) {
     if (dest === 'piscine') { onSelect('piscine'); return; }
     if (dest === 'profil') { setShowProfilUnifie(true); setShowBoutique(false); setLegalPage(null); return; }
     if (dest === 'boutique') { setShowBoutique(true); setLegalPage(null); setShowProfilUnifie(false); return; }
+    if (dest === 'notifications') { setLegalPage('notifications'); setShowBoutique(false); return; }
     if (dest === 'cgv') { setLegalPage('cgv'); setShowBoutique(false); return; }
     if (dest === 'mentions') { setLegalPage('mentions'); setShowBoutique(false); return; }
   };
@@ -37,6 +39,21 @@ export default function Hub({ onSelect, onSignOut, user }) {
         <button className="app__nav-back" onClick={() => setShowProfilUnifie(false)}>← Accueil</button>
       </header>
       <ProfileUnifie userId={user?.id} onClose={() => setShowProfilUnifie(false)} />
+    </div>
+  );
+
+  if (legalPage === 'notifications') return (
+    <div className="app">
+      <header className="app__header">
+        <BrandLogo size={26} />
+        <button className="app__nav-back" onClick={() => setLegalPage(null)}>← Accueil</button>
+      </header>
+      <div className="fiche-library" style={{ paddingBottom: '6rem' }}>
+        <span className="eyebrow">Paramètres</span>
+        <h2>Notifications</h2>
+        <PushNotifSetup userId={user?.id} />
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.6, marginTop: '1rem' }}>Les notifications vous envoient chaque soir à 20h la météo du lendemain et vos recommandations IA personnalisées.</p>
+      </div>
     </div>
   );
 

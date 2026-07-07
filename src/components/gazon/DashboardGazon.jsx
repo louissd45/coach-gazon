@@ -10,6 +10,7 @@ import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import { useFreeTrial } from '../../hooks/useFreeTrial';
 import LegalPages from '../legal/LegalPages';
+import PushNotifSetup from '../push/PushNotifSetup';
 import ProfileUnifie from '../auth/ProfileUnifie';
 import { useProfile } from '../../hooks/useProfile';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -27,6 +28,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [showProfilUnifie, setShowProfilUnifie] = useState(false);
 
   if (profileLoading || subStatus === 'loading') return <p className="app__loading">Chargement...</p>;
@@ -48,7 +50,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const resetAll = () => {
     setShowLibrary(false); setShowProfile(false);
     setShowHistory(false); setShowDiag(false);
-    setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false);
+    setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false); setShowNotifications(false);
   };
 
   const handleDrawerNav = (dest) => {
@@ -62,6 +64,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     if (dest === 'fiches-piscine') { onBackToHub(); return; }
     if (dest === 'agenda-piscine') { onBackToHub(); return; }
     if (dest === 'abonnement') { resetAll(); setShowProfile(false); }
+    if (dest === 'notifications') { setShowNotifications(true); }
     if (dest === 'cgv') setLegalPage('cgv');
     if (dest === 'mentions') setLegalPage('mentions');
   };
@@ -80,6 +83,15 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   };
 
   const renderContent = () => {
+    if (showNotifications) return (
+      <div className="fiche-library" style={{ paddingBottom: '6rem' }}>
+        <button className="fiche-library__back" onClick={() => setShowNotifications(false)}>← Retour</button>
+        <span className="eyebrow">Paramètres</span>
+        <h2>Notifications</h2>
+        <PushNotifSetup userId={user.id} />
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)', lineHeight: 1.6, marginTop: '1rem' }}>Les notifications vous envoient chaque soir à 20h la météo du lendemain et vos recommandations IA personnalisées.</p>
+      </div>
+    );
     if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} userId={user.id} />;
