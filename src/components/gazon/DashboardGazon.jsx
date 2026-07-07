@@ -8,6 +8,7 @@ import DiagnosticIA from './DiagnosticIA';
 import Paywall from '../billing/Paywall';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
+import { useFreeTrial } from '../../hooks/useFreeTrial';
 import LegalPages from '../legal/LegalPages';
 import ProfileUnifie from '../auth/ProfileUnifie';
 import { useProfile } from '../../hooks/useProfile';
@@ -16,6 +17,7 @@ import { useSubscription } from '../../hooks/useSubscription';
 export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const { loading: profileLoading, refresh: refreshProfile, isComplete } = useProfile(user.id);
   const { status: subStatus, loading: subLoading, startCheckout } = useSubscription(user.id);
+  const { canDiagnose, loading: trialLoading } = useFreeTrial(user.id);
   const [activeTab, setActiveTab] = useState('home');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -36,7 +38,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
     </main>
   );
 
-  if (subStatus === 'inactive') return (
+  if (subStatus === 'inactive' && !canDiagnose && !trialLoading) return (
     <main className="app">
       <header className="app__header"><BrandLogo size={26} /><button onClick={signOut}>Deconnexion</button></header>
       <Paywall onSubscribe={startCheckout} loading={subLoading} />
