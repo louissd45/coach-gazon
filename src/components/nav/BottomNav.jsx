@@ -11,19 +11,20 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
         </svg>
         <span>Accueil</span>
       </button>
+
       <button
-        className={`bottom-nav__item ${activeTab === 'fiches' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('fiches')}
-        aria-label="Fiches maladies"
+        className={`bottom-nav__item ${activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('diagnostic')}
+        aria-label="Diagnostic"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M4 4C4 3.4 4.4 3 5 3H15L20 8V20C20 20.6 19.6 21 19 21H5C4.4 21 4 20.6 4 20V4Z"
-            stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M15 3V8H20M8 12H16M8 16H13"
-            stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+          <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6"/>
+          <path d="M20 20L16.65 16.65" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M11 8V14M8 11H14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
         </svg>
-        <span>Fiches</span>
+        <span>Diagnostic</span>
       </button>
+
       <button
         className="bottom-nav__action"
         onClick={onAction}
@@ -33,6 +34,7 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
           <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
         </svg>
       </button>
+
       <button
         className={`bottom-nav__item ${activeTab === 'agenda' ? 'bottom-nav__item--active' : ''}`}
         onClick={() => onTab('agenda')}
@@ -44,6 +46,7 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
         </svg>
         <span>Agenda</span>
       </button>
+
       <button
         className={`bottom-nav__item ${activeTab === 'profile' ? 'bottom-nav__item--active' : ''}`}
         onClick={() => onTab('profile')}
