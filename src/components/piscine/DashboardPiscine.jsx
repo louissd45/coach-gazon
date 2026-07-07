@@ -16,7 +16,7 @@ const POOL_TABS = ['analyse_eau', 'probleme_eau', 'entretien_piscine', 'equipeme
 const POOL_LABELS = { analyse_eau: 'Analyse eau', probleme_eau: 'Problemes', entretien_piscine: 'Entretien', equipement_piscine: 'Equipements' };
 
 export default function DashboardPiscine({ user, signOut, onBackToHub }) {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('menu');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showDiag, setShowDiag] = useState(false);

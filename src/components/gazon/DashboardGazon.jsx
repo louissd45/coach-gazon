@@ -18,7 +18,7 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
   const { loading: profileLoading, refresh: refreshProfile, isComplete } = useProfile(user.id);
   const { status: subStatus, loading: subLoading, startCheckout } = useSubscription(user.id);
   const { canDiagnose, loading: trialLoading } = useFreeTrial(user.id);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('menu');
   const [showLibrary, setShowLibrary] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
