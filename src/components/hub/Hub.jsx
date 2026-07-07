@@ -4,6 +4,7 @@ import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
 import ProfileUnifie from '../auth/ProfileUnifie';
+import HubWidgets from './HubWidgets';
 
 const SPACES = [
   { id: 'gazon', title: 'Gazon', sub: 'Analyse et Soins', color: 'linear-gradient(145deg,#1b4332,#2d6a4f)' },
