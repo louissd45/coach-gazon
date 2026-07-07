@@ -5,6 +5,7 @@ import ProfilePiscine from './ProfilePiscine';
 import Drawer from '../common/Drawer';
 import Boutique from '../shop/Boutique';
 import LegalPages from '../legal/LegalPages';
+import DiagnosticHistory from '../history/DiagnosticHistory';
 import ProfileUnifie from '../auth/ProfileUnifie';
 import { fetchAllFiches } from '../../services/fichesService';
 import { supabase } from '../../services/supabaseClient';
@@ -20,6 +21,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const [showProfile, setShowProfile] = useState(false);
   const [showDiag, setShowDiag] = useState(false);
   const [showBoutique, setShowBoutique] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [legalPage, setLegalPage] = useState(null);
   const [showProfilUnifie, setShowProfilUnifie] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -27,7 +29,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
 
   const resetAll = () => {
     setShowLibrary(false); setShowProfile(false);
-    setShowDiag(false); setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false);
+    setShowDiag(false); setShowBoutique(false); setLegalPage(null); setShowProfilUnifie(false); setShowHistory(false);
   };
 
   const handleDrawerNav = (dest) => {
@@ -48,7 +50,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const handleTabChange = (tab) => {
     setActiveTab(tab); resetAll();
     if (tab === 'menu') { }
-    if (tab === 'history') { }
+    if (tab === 'history') { setShowHistory(true); }
     if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); }
     if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); }
     if (tab === 'profile') setShowProfile(true);
@@ -61,6 +63,7 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
   const renderContent = () => {
     if (showProfilUnifie) return <ProfileUnifie userId={user.id} onClose={() => setShowProfilUnifie(false)} />;
     if (legalPage) return <LegalPages page={legalPage} onBack={() => setLegalPage(null)} />;
+    if (showHistory) return <DiagnosticHistory userId={user.id} />;
     if (showBoutique) return <Boutique onClose={() => setShowBoutique(false)} initialTab="piscine" userId={user.id} />;
     if (showDiag) return <DiagnosticPiscine user={user} onClose={() => setShowDiag(false)} />;
     if (showProfile) return <ProfilePiscine userId={user.id} onSaved={() => setShowProfile(false)} />;
