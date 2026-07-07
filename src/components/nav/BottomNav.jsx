@@ -13,8 +13,8 @@ export default function BottomNav({ activeTab, onTab, onAction, onBackToHub }) {
       </button>
 
       <button
-        className={`bottom-nav__item ${activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
-        onClick={() => onTab('diagnostic')}
+        className={`bottom-nav__item ${activeTab === 'home' || activeTab === 'diagnostic' ? 'bottom-nav__item--active' : ''}`}
+        onClick={() => onTab('home')}
         aria-label="Diagnostic"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">

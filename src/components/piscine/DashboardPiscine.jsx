@@ -47,7 +47,6 @@ export default function DashboardPiscine({ user, signOut, onBackToHub }) {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab); resetAll();
-    if (tab === 'diagnostic') { setShowDiag(true); }
     if (tab === 'fiches') { setLibraryTab('analyse_eau'); setShowLibrary(true); }
     if (tab === 'agenda') { setLibraryTab('entretien_piscine'); setShowLibrary(true); }
     if (tab === 'profile') setShowProfile(true);

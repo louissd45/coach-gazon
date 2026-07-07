@@ -68,7 +68,6 @@ export default function DashboardGazon({ user, signOut, onBackToHub }) {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab); resetAll();
-    if (tab === 'diagnostic') { setShowDiag(true); }
     if (tab === 'fiches') { setLibraryTab('maladie'); setShowLibrary(true); }
     if (tab === 'agenda') { setLibraryTab('agenda'); setShowLibrary(true); }
     if (tab === 'profile') setShowProfile(true);
