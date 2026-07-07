@@ -1,24 +1,14 @@
 {
-  "name": "Coach Gazon",
-  "short_name": "Coach Gazon",
-  "description": "Diagnostic intelligent et conseils personnalisés pour votre pelouse",
+  "name": "Mon Expert Jardin",
+  "short_name": "Expert Jardin",
+  "description": "Diagnostic IA gazon et piscine",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f3eee2",
+  "background_color": "#ffffff",
   "theme_color": "#1b4332",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
