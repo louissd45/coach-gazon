@@ -87,6 +87,10 @@ export default function ProfileUnifie({ userId, onClose }) {
   }, [longueur, largeur, profondeur, diametre, formeBassin]);
 
   const handleSave = async () => {
+    if (!prenom.trim() || !nom.trim()) {
+      setError('Veuillez renseigner votre prénom et nom.');
+      return;
+    }
     setSaving(true); setError(null); setSaved(false);
     try {
       let latitude = null, longitude = null;
@@ -170,12 +174,12 @@ export default function ProfileUnifie({ userId, onClose }) {
 
           <div style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Prénom</label>
-              <input style={inputStyle} type="text" placeholder="Louis" value={prenom} onChange={e => setPrenom(e.target.value)} />
+              <label style={labelStyle}>Prénom *</label>
+              <input style={inputStyle} type="text" placeholder="Louis" value={prenom} onChange={e => setPrenom(e.target.value)} required />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Nom</label>
-              <input style={inputStyle} type="text" placeholder="Dupont" value={nom} onChange={e => setNom(e.target.value)} />
+              <label style={labelStyle}>Nom *</label>
+              <input style={inputStyle} type="text" placeholder="Dupont" value={nom} onChange={e => setNom(e.target.value)} required />
             </div>
           </div>
 
