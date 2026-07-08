@@ -95,7 +95,7 @@ export default function ProfileUnifie({ userId, onClose }) {
     try {
       let latitude = null, longitude = null;
       if (city) {
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=fr&country=FR`);
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=fr`);
         const geoData = await geoRes.json();
         if (geoData.results?.[0]) { latitude = geoData.results[0].latitude; longitude = geoData.results[0].longitude; }
       }
