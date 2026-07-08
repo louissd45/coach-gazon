@@ -7,6 +7,10 @@ export default function ProfileUnifie({ userId, onClose }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
 
+  // Identité
+  const [prenom, setPrenom] = useState('');
+  const [nom, setNom] = useState('');
+
   // Gazon
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
@@ -36,7 +40,9 @@ export default function ProfileUnifie({ userId, onClose }) {
       .maybeSingle()
       .then(({ data }) => {
         if (!data) return;
-        setPhone(data.phone ?? '');
+        setPrenom(data.prenom ?? '');
+          setNom(data.nom ?? '');
+          setPhone(data.phone ?? '');
         setCity(data.city ?? '');
         setSmsConsent(data.sms_consent ?? false);
         setTypeSol(data.type_sol ?? 'inconnu');
@@ -91,6 +97,7 @@ export default function ProfileUnifie({ userId, onClose }) {
       }
       const { error: upsertError } = await supabase.from('users_profile').upsert({
         user_id: userId,
+        prenom, nom,
         phone, city, latitude, longitude, sms_consent: smsConsent,
         type_sol: typeSol, type_gazon: typeGazon,
         arrosage_automatique: arrosageAuto,
@@ -158,6 +165,17 @@ export default function ProfileUnifie({ userId, onClose }) {
             <div>
               <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem', color: '#1b4332' }}>Profil Gazon</p>
               <p style={{ margin: 0, fontSize: '0.75rem', color: '#2d6a4f' }}>Ces infos personnalisent vos diagnostics et packs boutique</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: '1rem' }}>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>Prénom</label>
+              <input style={inputStyle} type="text" placeholder="Louis" value={prenom} onChange={e => setPrenom(e.target.value)} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>Nom</label>
+              <input style={inputStyle} type="text" placeholder="Dupont" value={nom} onChange={e => setNom(e.target.value)} />
             </div>
           </div>
 
