@@ -44,6 +44,7 @@ export default function ProfilePiscine({ userId, onSaved, mode = 'edit' }) {
     } else {
       setDiametre('');
     }
+    setProfondeur('');
     setVolumeM3('');
   }, [formeBassin]);
 

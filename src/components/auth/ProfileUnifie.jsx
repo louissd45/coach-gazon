@@ -62,6 +62,7 @@ export default function ProfileUnifie({ userId, onClose }) {
     } else {
       setDiametre('');
     }
+    setProfondeur('');
     setVolumeM3('');
   }, [formeBassin]);
 
