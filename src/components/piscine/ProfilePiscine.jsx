@@ -39,6 +39,15 @@ export default function ProfilePiscine({ userId, onSaved, mode = 'edit' }) {
   }, [userId]);
 
   useEffect(() => {
+    if (formeBassin === 'ronde') {
+      setLongueur(''); setLargeur('');
+    } else {
+      setDiametre('');
+    }
+    setVolumeM3('');
+  }, [formeBassin]);
+
+  useEffect(() => {
     if (formeBassin === 'rectangulaire' && longueur && largeur && profondeur) {
       const vol = Math.round(parseFloat(longueur) * parseFloat(largeur) * parseFloat(profondeur) * 1000);
       if (!isNaN(vol)) setVolumeM3(vol);

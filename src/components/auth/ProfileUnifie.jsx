@@ -55,6 +55,16 @@ export default function ProfileUnifie({ userId, onClose }) {
       });
   }, [userId]);
 
+  // Reset des champs selon la forme sélectionnée
+  useEffect(() => {
+    if (formeBassin === 'ronde') {
+      setLongueur(''); setLargeur('');
+    } else {
+      setDiametre('');
+    }
+    setVolumeM3('');
+  }, [formeBassin]);
+
   useEffect(() => {
     if (formeBassin === 'rectangulaire' && longueur && largeur && profondeur) {
       const vol = Math.round(parseFloat(longueur) * parseFloat(largeur) * parseFloat(profondeur) * 1000);
