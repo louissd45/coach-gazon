@@ -109,6 +109,52 @@ function WidgetDernierDiag({ userId, onSelect }) {
   );
 }
 
+// Widget Conseil de la semaine
+function WidgetConseilSemaine({ userId }) {
+  const [notif, setNotif] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+    supabase
+      .from('notifications')
+      .select('title, body, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => { setNotif(data); setLoading(false); });
+  }, [userId]);
+
+  if (loading || !notif) return null;
+
+  const date = new Date(notif.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+
+  return (
+    <button
+      onClick={() => setExpanded(!expanded)}
+      style={{ background: 'linear-gradient(135deg, #1a5276, #2e86c1)', borderRadius: 16, padding: '16px 18px', width: '100%', border: 'none', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? 10 : 0 }}>
+        <div>
+          <p style={{ margin: 0, fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            Programme semaine du {date}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: '0.92rem', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-display)' }}>
+            {notif.title}
+          </p>
+        </div>
+        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+      </div>
+      {expanded && (
+        <p style={{ margin: 0, fontSize: '0.83rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.65, whiteSpace: 'pre-line' }}>
+          {notif.body}
+        </p>
+      )}
+    </button>
+  );
+}
+
 export default function HubWidgets({ userId, user, onSelect }) {
   const [profil, setProfil] = useState(null);
 
@@ -129,6 +175,9 @@ export default function HubWidgets({ userId, user, onSelect }) {
           <WidgetMeteo city={profil.city} lat={profil.latitude} lon={profil.longitude} />
         </div>
       )}
+
+      {/* Conseil de la semaine */}
+      <WidgetConseilSemaine userId={userId} />
 
       {/* Conseil du mois */}
       <WidgetConseil />
