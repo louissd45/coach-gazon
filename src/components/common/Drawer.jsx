@@ -151,7 +151,7 @@ export default function Drawer({ open, onClose, onNavigate, onSignOut, userName 
                 <span style={{ fontSize: '1.1rem', width: 24, textAlign: 'center' }}>{plan.icon}</span>
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: 0, fontWeight: 700, fontSize: '0.82rem', color: plan.color }}>{plan.name}</p>
-                  <p style={{ margin: 0, fontSize: '0.7rem', color: plan.color, opacity: 0.7 }}>{plan.monthly}/mois · {plan.yearly}/an</p>
+                  <p style={{ margin: 0, fontSize: '0.7rem', color: plan.color, opacity: 0.7 }}>{plan.yearly}/an</p>
                 </div>
                 <span style={{ fontSize: '0.75rem', color: plan.color, opacity: 0.6 }}>→</span>
               </button>
