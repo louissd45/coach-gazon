@@ -16,7 +16,6 @@ const CONSEILS_MOIS = {
   12: { emoji: '❄️', titre: 'Décembre', conseil: 'Repos total. Planifiez votre programme 2025. Vérifiez votre stock de produits pour le printemps.' },
 };
 
-// Widget Météo
 function WidgetMeteo({ city, lat, lon }) {
   const [meteo, setMeteo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +52,6 @@ function WidgetMeteo({ city, lat, lon }) {
   );
 }
 
-// Widget Conseil du mois
 function WidgetConseil() {
   const mois = new Date().getMonth() + 1;
   const c = CONSEILS_MOIS[mois];
@@ -69,7 +67,56 @@ function WidgetConseil() {
   );
 }
 
-// Widget Dernier diagnostic
+function WidgetConseilSemaine({ userId, autoOpen }) {
+  const [notif, setNotif] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+    supabase
+      .from('notifications')
+      .select('title, body, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        setNotif(data);
+        setLoading(false);
+        // Auto-ouvrir si vient d'un clic sur notification
+        if (data && autoOpen) setExpanded(true);
+      });
+  }, [userId, autoOpen]);
+
+  if (loading || !notif) return null;
+
+  const date = new Date(notif.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+
+  return (
+    <button
+      onClick={() => setExpanded(!expanded)}
+      style={{ background: 'linear-gradient(135deg, #1a5276, #2e86c1)', borderRadius: 16, padding: '16px 18px', width: '100%', border: 'none', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? 10 : 0 }}>
+        <div>
+          <p style={{ margin: 0, fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            Programme semaine du {date}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: '0.92rem', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-display)' }}>
+            {notif.title}
+          </p>
+        </div>
+        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0, marginLeft: 8 }}>▼</span>
+      </div>
+      {expanded && (
+        <p style={{ margin: 0, fontSize: '0.83rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.65, whiteSpace: 'pre-line', marginTop: 8 }}>
+          {notif.body}
+        </p>
+      )}
+    </button>
+  );
+}
+
 function WidgetDernierDiag({ userId, onSelect }) {
   const [diag, setDiag] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -109,54 +156,9 @@ function WidgetDernierDiag({ userId, onSelect }) {
   );
 }
 
-// Widget Conseil de la semaine
-function WidgetConseilSemaine({ userId }) {
-  const [notif, setNotif] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    if (!userId) return;
-    supabase
-      .from('notifications')
-      .select('title, body, created_at')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => { setNotif(data); setLoading(false); });
-  }, [userId]);
-
-  if (loading || !notif) return null;
-
-  const date = new Date(notif.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
-
-  return (
-    <button
-      onClick={() => setExpanded(!expanded)}
-      style={{ background: 'linear-gradient(135deg, #1a5276, #2e86c1)', borderRadius: 16, padding: '16px 18px', width: '100%', border: 'none', textAlign: 'left', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: expanded ? 10 : 0 }}>
-        <div>
-          <p style={{ margin: 0, fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Programme semaine du {date}
-          </p>
-          <p style={{ margin: '4px 0 0', fontSize: '0.92rem', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-display)' }}>
-            {notif.title}
-          </p>
-        </div>
-        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
-      </div>
-      {expanded && (
-        <p style={{ margin: 0, fontSize: '0.83rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.65, whiteSpace: 'pre-line' }}>
-          {notif.body}
-        </p>
-      )}
-    </button>
-  );
-}
-
 export default function HubWidgets({ userId, user, onSelect }) {
   const [profil, setProfil] = useState(null);
+  const autoOpen = new URLSearchParams(window.location.search).get('notif') === '1';
 
   useEffect(() => {
     if (!userId) return;
@@ -167,22 +169,22 @@ export default function HubWidgets({ userId, user, onSelect }) {
       .then(({ data }) => setProfil(data));
   }, [userId]);
 
+  // Nettoyer le paramètre notif de l'URL après ouverture
+  useEffect(() => {
+    if (autoOpen) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('notif');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [autoOpen]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: '1.25rem' }}>
-      {/* Météo + info */}
       {profil?.latitude && (
-        <div style={{ display: 'flex', gap: 10 }}>
-          <WidgetMeteo city={profil.city} lat={profil.latitude} lon={profil.longitude} />
-        </div>
+        <WidgetMeteo city={profil.city} lat={profil.latitude} lon={profil.longitude} />
       )}
-
-      {/* Conseil de la semaine */}
-      <WidgetConseilSemaine userId={userId} />
-
-      {/* Conseil du mois */}
+      <WidgetConseilSemaine userId={userId} autoOpen={autoOpen} />
       <WidgetConseil />
-
-      {/* Dernier diagnostic */}
       <WidgetDernierDiag userId={userId} onSelect={onSelect} />
     </div>
   );
