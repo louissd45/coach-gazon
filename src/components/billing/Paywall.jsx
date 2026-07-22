@@ -2,38 +2,6 @@ import { useState } from 'react';
 
 const PLANS = [
   {
-    id: 'gazon',
-    icon: '🌿',
-    name: 'Expert Gazon',
-    color: '#1b4332',
-    colorLight: '#e8f5e9',
-    monthlyPrice: 4.99,
-    yearlyPrice: 49,
-    features: [
-      'Diagnostic IA gazon illimite',
-      'Fiches maladies et mauvaises herbes',
-      'Agenda mensuel personnalise',
-      'Historique des diagnostics',
-      'Boutique produits gazon',
-    ],
-  },
-  {
-    id: 'piscine',
-    icon: '💧',
-    name: 'Expert Piscine',
-    color: '#1a5276',
-    colorLight: '#e3f2fd',
-    monthlyPrice: 3.99,
-    yearlyPrice: 39,
-    features: [
-      'Diagnostic IA piscine illimite',
-      'Analyse eau et bandelettes par photo',
-      'Doses calculees selon votre volume',
-      'Fiches entretien saisonnier',
-      'Boutique produits piscine',
-    ],
-  },
-  {
     id: 'both',
     icon: '⭐',
     name: 'Gazon + Piscine',
@@ -47,49 +15,60 @@ const PLANS = [
       'Expert Piscine IA inclus',
       '50+ fiches techniques',
       'Agenda et boutique complets',
-      'Satisfait ou rembourse 30 jours',
+      'Satisfait ou remboursé 30 jours',
+    ],
+  },
+  {
+    id: 'gazon',
+    icon: '🌿',
+    name: 'Expert Gazon',
+    color: '#1b4332',
+    colorLight: '#e8f5e9',
+    monthlyPrice: 4.99,
+    yearlyPrice: 49,
+    features: [
+      'Diagnostic IA gazon illimité',
+      'Fiches maladies et mauvaises herbes',
+      'Agenda mensuel personnalisé',
+      'Historique des diagnostics',
+      'Boutique produits gazon',
+    ],
+  },
+  {
+    id: 'piscine',
+    icon: '💧',
+    name: 'Expert Piscine',
+    color: '#1a5276',
+    colorLight: '#e3f2fd',
+    monthlyPrice: 3.99,
+    yearlyPrice: 39,
+    features: [
+      'Diagnostic IA piscine illimité',
+      'Analyse eau et bandelettes par photo',
+      'Doses calculées selon votre volume',
+      'Fiches entretien saisonnier',
+      'Boutique produits piscine',
     ],
   },
 ];
 
 export default function Paywall({ onSubscribe, loading }) {
-  const [billing, setBilling] = useState('yearly');
   const [selected, setSelected] = useState('both');
+  const [showMonthly, setShowMonthly] = useState(false);
 
   const selectedPlan = PLANS.find(p => p.id === selected);
-  const price = billing === 'yearly' ? selectedPlan.yearlyPrice : selectedPlan.monthlyPrice;
-  const period = billing === 'yearly' ? 'an' : 'mois';
-  const saving = Math.round((1 - selectedPlan.yearlyPrice / (selectedPlan.monthlyPrice * 12)) * 100);
 
   return (
     <div className="paywall">
       <span className="eyebrow">Abonnement</span>
       <h2 style={{ fontSize: '1.6rem', marginBottom: '0.5rem' }}>Choisissez votre espace</h2>
       <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
-        Diagnostic IA, fiches, conseils personnalises
+        Diagnostic IA, fiches, conseils personnalisés et programme hebdomadaire
       </p>
 
-      {/* Toggle mensuel / annuel */}
-      <div style={{ display: 'flex', background: 'var(--bg-soft)', borderRadius: 980, padding: 4, marginBottom: '1.5rem', gap: 4 }}>
-        <button
-          onClick={() => setBilling('monthly')}
-          style={{ flex: 1, padding: '8px', borderRadius: 980, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, background: billing === 'monthly' ? '#fff' : 'transparent', color: billing === 'monthly' ? 'var(--text)' : 'var(--text-dim)', boxShadow: billing === 'monthly' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none', transition: 'all 0.2s' }}>
-          Mensuel
-        </button>
-        <button
-          onClick={() => setBilling('yearly')}
-          style={{ flex: 1, padding: '8px', borderRadius: 980, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, background: billing === 'yearly' ? '#fff' : 'transparent', color: billing === 'yearly' ? 'var(--text)' : 'var(--text-dim)', boxShadow: billing === 'yearly' ? '0 1px 4px rgba(0,0,0,0.12)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-          Annuel
-          <span style={{ background: '#86efac', color: '#0a1f0f', fontSize: '0.65rem', fontWeight: 800, borderRadius: 980, padding: '2px 7px' }}>-18%</span>
-        </button>
-      </div>
-
-      {/* Plans */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
         {PLANS.map(plan => (
-          <button
-            key={plan.id}
-            onClick={() => setSelected(plan.id)}
+          <button key={plan.id} onClick={() => setSelected(plan.id)}
             style={{
               background: selected === plan.id ? plan.colorLight : 'var(--surface)',
               border: selected === plan.id ? `2px solid ${plan.color}` : '1.5px solid var(--border)',
@@ -109,10 +88,10 @@ export default function Paywall({ onSubscribe, loading }) {
                 <span style={{ fontWeight: 800, fontSize: '0.95rem', color: selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>{plan.name}</span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontWeight: 900, fontSize: '1.2rem', color: selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>
-                  {billing === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice}€
+                <span style={{ fontWeight: 900, fontSize: '1.3rem', color: selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>
+                  {plan.yearlyPrice}€
                 </span>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginLeft: 2 }}>/{period}</span>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginLeft: 2 }}>/an</span>
               </div>
             </div>
             <ul style={{ paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -126,28 +105,36 @@ export default function Paywall({ onSubscribe, loading }) {
         ))}
       </div>
 
-      {/* CTA */}
-      <button
-        className="btn-primary"
-        onClick={() => onSubscribe(selected, billing)}
-        disabled={loading}
+      <button className="btn-primary" onClick={() => onSubscribe(selected, 'yearly')} disabled={loading}
         style={{ width: '100%', fontSize: '1rem', padding: '1rem', marginBottom: '0.75rem' }}>
-        {loading ? 'Redirection...' : `S'abonner — ${price}€/${period}`}
+        {loading ? 'Redirection...' : `S'abonner — ${selectedPlan.yearlyPrice}€/an`}
       </button>
 
-      {billing === 'yearly' && (
-        <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.5rem' }}>
-          Economisez {saving}% par rapport au mensuel
-        </p>
-      )}
+      <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+        <button onClick={() => setShowMonthly(!showMonthly)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.78rem', color: 'var(--text-dim)', textDecoration: 'underline', fontFamily: 'var(--font-body)' }}>
+          {showMonthly ? 'Masquer' : `Voir l'option mensuelle (${selectedPlan.monthlyPrice}€/mois)`}
+        </button>
+        {showMonthly && (
+          <button onClick={() => onSubscribe(selected, 'monthly')} disabled={loading}
+            style={{ display: 'block', width: '100%', marginTop: 8, padding: '0.75rem', borderRadius: 12, border: '1.5px solid var(--border)', background: 'var(--surface)', fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', color: 'var(--text)' }}>
+            {loading ? 'Redirection...' : `Continuer en mensuel — ${selectedPlan.monthlyPrice}€/mois`}
+          </button>
+        )}
+      </div>
 
-      <p className="paywall__hint" style={{ textAlign: 'center' }}>
-        Paiement securise par Stripe · Satisfait ou rembourse 30 jours
-      </p>
+      <div style={{ textAlign: 'center' }}>
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', margin: '0 0 4px' }}>
+          💡 L'annuel vous économise {Math.round((1 - selectedPlan.yearlyPrice / (selectedPlan.monthlyPrice * 12)) * 100)}% — sans surprise en fin d'année
+        </p>
+        <p className="paywall__hint" style={{ margin: 0 }}>
+          Paiement sécurisé par Stripe · Satisfait ou remboursé 30 jours
+        </p>
+      </div>
 
       <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'var(--bg-soft)', borderRadius: 12, fontSize: '0.72rem', color: 'var(--text-dim)', textAlign: 'center', lineHeight: 1.6 }}>
-        En vous abonnant vous acceptez nos <strong>CGV</strong> et notre <strong>Politique de confidentialite</strong>.
-        Les diagnostics IA sont fournis a titre indicatif uniquement.
+        En vous abonnant vous acceptez nos <strong>CGV</strong> et notre <strong>Politique de confidentialité</strong>.
+        Les diagnostics IA sont fournis à titre indicatif uniquement.
       </div>
     </div>
   );
