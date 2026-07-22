@@ -20,6 +20,11 @@ export default function ProfileUnifie({ userId, onClose }) {
   const [arrosageAuto, setArrosageAuto] = useState(false);
   const [surfaceM2, setSurfaceM2] = useState('');
 
+  // Engrais
+  const [engraisDate, setEngraisDate] = useState('');
+  const [engraisType, setEngraisType] = useState('printemps');
+  const [engraisProchaine, setEngraisProchaine] = useState('');
+
   // Piscine
   const [longueur, setLongueur] = useState('');
   const [largeur, setLargeur] = useState('');
@@ -41,14 +46,17 @@ export default function ProfileUnifie({ userId, onClose }) {
       .then(({ data }) => {
         if (!data) return;
         setPrenom(data.prenom ?? '');
-          setNom(data.nom ?? '');
-          setPhone(data.phone ?? '');
+        setNom(data.nom ?? '');
+        setPhone(data.phone ?? '');
         setCity(data.city ?? '');
         setSmsConsent(data.sms_consent ?? false);
         setTypeSol(data.type_sol ?? 'inconnu');
         setTypeGazon(data.type_gazon ?? 'inconnu');
         setArrosageAuto(data.arrosage_automatique ?? false);
         setSurfaceM2(data.surface_m2 ?? '');
+        setEngraisDate(data.engrais_derniere_date ?? '');
+        setEngraisType(data.engrais_type ?? 'printemps');
+        setEngraisProchaine(data.engrais_prochaine_date ?? '');
         setLongueur(data.piscine_longueur_m ?? '');
         setLargeur(data.piscine_largeur_m ?? '');
         setProfondeur(data.piscine_profondeur_m ?? '');
@@ -58,8 +66,25 @@ export default function ProfileUnifie({ userId, onClose }) {
         setTypeFiltre(data.piscine_type_filtre ?? 'sable');
         setRobot(data.piscine_robot ?? false);
         setChauffage(data.piscine_chauffage ?? 'aucun');
+        setFormeBassin(data.piscine_forme ?? 'rectangulaire');
+        setDiametre(data.piscine_diametre_m ?? '');
       });
   }, [userId]);
+
+  // Calculer prochaine date engrais automatiquement
+  useEffect(() => {
+    if (!engraisDate) return;
+    const date = new Date(engraisDate);
+    const INTERVALLES = {
+      'printemps': 60,
+      'automne': 90,
+      'universel': 45,
+      'gazon_vert': 30,
+    };
+    const jours = INTERVALLES[engraisType] || 60;
+    date.setDate(date.getDate() + jours);
+    setEngraisProchaine(date.toISOString().split('T')[0]);
+  }, [engraisDate, engraisType]);
 
   // Reset des champs selon la forme sélectionnée
   useEffect(() => {
@@ -106,6 +131,9 @@ export default function ProfileUnifie({ userId, onClose }) {
         type_sol: typeSol, type_gazon: typeGazon,
         arrosage_automatique: arrosageAuto,
         surface_m2: surfaceM2 ? parseInt(surfaceM2) : null,
+        engrais_derniere_date: engraisDate || null,
+        engrais_type: engraisType,
+        engrais_prochaine_date: engraisProchaine || null,
         piscine_longueur_m: longueur ? parseFloat(longueur) : null,
         piscine_largeur_m: largeur ? parseFloat(largeur) : null,
         piscine_profondeur_m: profondeur ? parseFloat(profondeur) : null,
@@ -155,7 +183,6 @@ export default function ProfileUnifie({ userId, onClose }) {
 
       <h2 style={{ marginBottom: '1.25rem' }}>Mon jardin</h2>
 
-      {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: '1.5rem' }}>
         {tabBtn('gazon', '🌿', 'Gazon', '#1b4332')}
         {tabBtn('piscine', '💧', 'Piscine', '#1a5276')}
@@ -215,6 +242,35 @@ export default function ProfileUnifie({ userId, onClose }) {
               <option value="ombre">Zone ombragée</option>
             </select>
           </div>
+
+          {/* Section Engrais */}
+          <div style={{ background: '#f0faf4', border: '1px solid #86efac', borderRadius: 14, padding: '14px 16px', marginBottom: '1rem' }}>
+            <p style={{ margin: '0 0 12px', fontWeight: 700, fontSize: '0.88rem', color: '#1b4332' }}>🌱 Suivi des engrais</p>
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Type d'engrais utilisé</label>
+              <select style={selectStyle} value={engraisType} onChange={e => setEngraisType(e.target.value)}>
+                <option value="printemps">Printemps — riche en azote</option>
+                <option value="automne">Automne — riche en potasse</option>
+                <option value="universel">Universel NPK</option>
+                <option value="gazon_vert">Gazon vert — action rapide</option>
+              </select>
+            </div>
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Date du dernier apport</label>
+              <input style={inputStyle} type="date" value={engraisDate} onChange={e => setEngraisDate(e.target.value)} />
+            </div>
+            {engraisProchaine && (
+              <div style={{ background: '#e8f5e9', borderRadius: 10, padding: '10px 12px' }}>
+                <p style={{ margin: 0, fontSize: '0.78rem', color: '#1b4332', fontWeight: 700 }}>
+                  📅 Prochain apport : {new Date(engraisProchaine).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+                <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: '#2d6a4f' }}>
+                  Vous recevrez un rappel automatique 7 jours avant
+                </p>
+              </div>
+            )}
+          </div>
+
           <label style={checkStyle} onClick={() => setArrosageAuto(!arrosageAuto)}>
             <input type="checkbox" checked={arrosageAuto} onChange={e => setArrosageAuto(e.target.checked)} style={{ width: 18, height: 18, accentColor: '#1b4332' }} />
             <span style={{ fontSize: '0.9rem', color: 'var(--text)', fontWeight: 500 }}>Arrosage automatique</span>
