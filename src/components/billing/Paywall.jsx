@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '../../services/supabaseClient';
 
 const PLANS = [
   {
@@ -55,8 +56,46 @@ const PLANS = [
 export default function Paywall({ onSubscribe, loading }) {
   const [selected, setSelected] = useState('both');
   const [showMonthly, setShowMonthly] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoStatus, setPromoStatus] = useState(null); // null | 'valid' | 'invalid' | 'checking'
+  const [promoReduction, setPromoReduction] = useState(0);
+  const [promoId, setPromoId] = useState(null);
 
   const selectedPlan = PLANS.find(p => p.id === selected);
+  const prixAnnuel = Math.round(selectedPlan.yearlyPrice * (1 - promoReduction / 100));
+  const prixMensuel = selectedPlan.monthlyPrice;
+
+  const verifierCode = async () => {
+    if (!promoCode.trim()) return;
+    setPromoStatus('checking');
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select('id, reduction_pct, date_expiration, utilisations_max, utilisations_count, actif')
+        .eq('code', promoCode.trim().toUpperCase())
+        .maybeSingle();
+
+      if (error || !data) { setPromoStatus('invalid'); setPromoReduction(0); return; }
+      if (!data.actif) { setPromoStatus('invalid'); setPromoReduction(0); return; }
+      if (data.date_expiration && new Date(data.date_expiration) < new Date()) { setPromoStatus('invalid'); setPromoReduction(0); return; }
+      if (data.utilisations_count >= data.utilisations_max) { setPromoStatus('invalid'); setPromoReduction(0); return; }
+
+      setPromoStatus('valid');
+      setPromoReduction(data.reduction_pct);
+      setPromoId(data.id);
+    } catch {
+      setPromoStatus('invalid');
+      setPromoReduction(0);
+    }
+  };
+
+  const handleSubscribe = async (planId, billing) => {
+    // Incrémenter le compteur d'utilisation du code promo
+    if (promoStatus === 'valid' && promoId) {
+      await supabase.rpc('increment_promo_usage', { promo_id: promoId }).catch(() => {});
+    }
+    onSubscribe(planId, billing, promoStatus === 'valid' ? promoCode.trim().toUpperCase() : null);
+  };
 
   return (
     <div className="paywall">
@@ -88,8 +127,11 @@ export default function Paywall({ onSubscribe, loading }) {
                 <span style={{ fontWeight: 800, fontSize: '0.95rem', color: selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>{plan.name}</span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontWeight: 900, fontSize: '1.3rem', color: selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>
-                  {plan.yearlyPrice}€
+                {promoReduction > 0 && selected === plan.id && (
+                  <span style={{ fontSize: '0.8rem', color: '#999', textDecoration: 'line-through', marginRight: 6 }}>{plan.yearlyPrice}€</span>
+                )}
+                <span style={{ fontWeight: 900, fontSize: '1.3rem', color: promoReduction > 0 && selected === plan.id ? '#e53e3e' : selected === plan.id ? plan.color : 'var(--text)', fontFamily: 'var(--font-display)' }}>
+                  {selected === plan.id ? prixAnnuel : plan.yearlyPrice}€
                 </span>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginLeft: 2 }}>/an</span>
               </div>
@@ -105,20 +147,48 @@ export default function Paywall({ onSubscribe, loading }) {
         ))}
       </div>
 
-      <button className="btn-primary" onClick={() => onSubscribe(selected, 'yearly')} disabled={loading}
+      {/* Code promo */}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            type="text"
+            placeholder="Code promo (optionnel)"
+            value={promoCode}
+            onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoStatus(null); setPromoReduction(0); }}
+            style={{ flex: 1, padding: '0.75rem', borderRadius: 10, border: `1.5px solid ${promoStatus === 'valid' ? '#86efac' : promoStatus === 'invalid' ? '#fca5a5' : 'var(--border)'}`, background: 'var(--bg-soft)', fontFamily: 'var(--font-body)', fontSize: '0.9rem' }}
+          />
+          <button onClick={verifierCode} disabled={promoStatus === 'checking' || !promoCode.trim()}
+            style={{ padding: '0.75rem 1rem', borderRadius: 10, border: 'none', background: '#1b4332', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            {promoStatus === 'checking' ? '...' : 'Appliquer'}
+          </button>
+        </div>
+        {promoStatus === 'valid' && (
+          <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: '#1b4332', fontWeight: 700 }}>
+            ✅ Code valide — {promoReduction}% de réduction appliqué !
+          </p>
+        )}
+        {promoStatus === 'invalid' && (
+          <p style={{ margin: '6px 0 0', fontSize: '0.78rem', color: '#e53e3e' }}>
+            ❌ Code invalide ou expiré
+          </p>
+        )}
+      </div>
+
+      {/* CTA */}
+      <button className="btn-primary" onClick={() => handleSubscribe(selected, 'yearly')} disabled={loading}
         style={{ width: '100%', fontSize: '1rem', padding: '1rem', marginBottom: '0.75rem' }}>
-        {loading ? 'Redirection...' : `S'abonner — ${selectedPlan.yearlyPrice}€/an`}
+        {loading ? 'Redirection...' : `S'abonner — ${prixAnnuel}€/an${promoReduction > 0 ? ` (-${promoReduction}%)` : ''}`}
       </button>
 
       <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
         <button onClick={() => setShowMonthly(!showMonthly)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.78rem', color: 'var(--text-dim)', textDecoration: 'underline', fontFamily: 'var(--font-body)' }}>
-          {showMonthly ? 'Masquer' : `Voir l'option mensuelle (${selectedPlan.monthlyPrice}€/mois)`}
+          {showMonthly ? 'Masquer' : `Voir l'option mensuelle (${prixMensuel}€/mois)`}
         </button>
         {showMonthly && (
-          <button onClick={() => onSubscribe(selected, 'monthly')} disabled={loading}
+          <button onClick={() => handleSubscribe(selected, 'monthly')} disabled={loading}
             style={{ display: 'block', width: '100%', marginTop: 8, padding: '0.75rem', borderRadius: 12, border: '1.5px solid var(--border)', background: 'var(--surface)', fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', color: 'var(--text)' }}>
-            {loading ? 'Redirection...' : `Continuer en mensuel — ${selectedPlan.monthlyPrice}€/mois`}
+            {loading ? 'Redirection...' : `Continuer en mensuel — ${prixMensuel}€/mois`}
           </button>
         )}
       </div>
